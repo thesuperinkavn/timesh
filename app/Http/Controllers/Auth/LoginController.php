@@ -36,4 +36,14 @@ class LoginController extends Controller
     {
         $this->middleware('guest')->except('logout');
     }
+
+    public function showLoginForm()
+    {
+        $params = [
+            'title'         => 'Trang đăng nhập dành cho nhân viên',
+            'js'            => 'user.components.login.js',
+            'class'         => 'login-container'
+        ];
+        return view('user.pages.login')->with($params);
+    }
 }
