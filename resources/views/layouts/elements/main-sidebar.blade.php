@@ -35,6 +35,7 @@
 
                     <!-- Main -->
                     <li class="navigation-header"><span>Main</span> <i class="icon-menu" title="Main pages"></i></li>
+                    @if (Auth::guard('admin')->check())
                     <li class="active"><a href="index.html"><i class="icon-home4"></i> <span>Tổng quan</span></a></li>
                     <li>
                         <a href="#"><i class="icon-user"></i> <span>Nhân viên</span></a>
@@ -43,9 +44,16 @@
                             <li><a href="{{ url('admin/usermanagement') }}">Quản lý</a></li>
                         </ul>
                     </li>
+                    @endif
+                    @if (Auth::guard()->check())
+                    <li>
+                        <a href="{{ url('task') }}"><i class="icon-task"></i> <span>Quản lí task</span></a>
+                    </li>
+                    @endif
                     <li>
                         <a href="#"><i class="icon-copy"></i> <span>Timesheet</span></a>
                     </li>
+                    @if (Auth::guard('admin')->check())
                     <li>
                         <a href="#"><i class="icon-cog3"></i> <span>Hệ thống</span></a>
                         <ul>
@@ -53,6 +61,7 @@
                             <li><a href="colors_danger.html">Cấu hình thời gian</a></li>
                         </ul>
                     </li>
+                    @endif
                     <!-- /Main -->
                 </ul>
             </div>

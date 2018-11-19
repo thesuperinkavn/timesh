@@ -18,7 +18,7 @@ Route::get('/', function () {
 //Auth::routes();
 Auth::routes(['register' => false]);
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/home', 'User\TaskController@index')->name('home');
 
 Route::prefix('admin')->group(function() {
     Route::get('/login', 'Auth\AdminLoginController@showLoginForm')->name('admin.login');
@@ -29,6 +29,15 @@ Route::prefix('admin')->group(function() {
     Route::any('/dashboard', 'Admin\AdminController@index')->name('admin.home');
     Route::any('/usermanagement', 'Admin\UserManagement@index');
     Route::post('/usermanagement/action', 'Admin\UserManagement@action');
+    Route::post('/usermanagement/add', 'Admin\UserManagement@add');
+    Route::post('/usermanagement/edit', 'Admin\UserManagement@edit');
+    Route::post('/usermanagement/destroy', 'Admin\UserManagement@destroy');
+
+});
+
+
+Route::prefix('')->group(function() {
+    Route::any('/task', 'User\TaskController@index');
     Route::post('/usermanagement/add', 'Admin\UserManagement@add');
     Route::post('/usermanagement/edit', 'Admin\UserManagement@edit');
     Route::post('/usermanagement/destroy', 'Admin\UserManagement@destroy');
