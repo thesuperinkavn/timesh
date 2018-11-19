@@ -31,13 +31,13 @@
 		<div class="page-content">
 
 			<!-- MAIN-SIDEBAR -->
-			@if (!Route::has('login'))
+			@if (Auth::guard('admin')->check() || Auth::guard()->check())
 				@include("layouts.elements.main-sidebar")
 			@endif
 
 			<!-- Main content -->
 			<div class="content-wrapper">
-				@if (!Route::has('login'))
+				@if (Auth::guard('admin')->check() || Auth::guard()->check())
 					<!-- PAGE-HEADER -->
 					@include("layouts.elements.page-header")
 				@endif

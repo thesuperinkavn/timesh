@@ -33,8 +33,25 @@
 
                     <!-- Main -->
                     <li class="navigation-header"><span>Main</span> <i class="icon-menu" title="Main pages"></i></li>
-                    <li class="active"><a href="{{url('home')}}"><i class="icon-home4"></i> <span>Dashboard</span></a></li>
-                    <!-- /main -->
+                    <li class="active"><a href="index.html"><i class="icon-home4"></i> <span>Tổng quan</span></a></li>
+                    <li>
+                        <a href="#"><i class="icon-user"></i> <span>Nhân viên</span></a>
+                        <ul>
+                            <li><a href="layout_navbar_fixed.html">Thêm mới</a></li>
+                            <li><a href="layout_navbar_sidebar_fixed.html">Quản lý</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#"><i class="icon-copy"></i> <span>Timesheet</span></a>
+                    </li>
+                    <li>
+                        <a href="#"><i class="icon-cog3"></i> <span>Hệ thống</span></a>
+                        <ul>
+                            <li><a href="colors_primary.html">Email</a></li>
+                            <li><a href="colors_danger.html">Cấu hình thời gian</a></li>
+                        </ul>
+                    </li>
+                    <!-- /Main -->
                 </ul>
             </div>
         </div>
