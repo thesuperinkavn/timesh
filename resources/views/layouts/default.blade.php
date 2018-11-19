@@ -9,8 +9,9 @@
     <title> @yield('title')</title>
 
 	<!-- HEAD -->
-    @include("layouts.elements.head")
-
+	@include("layouts.elements.head")
+	
+	@yield('head-css')
 	<!-- Theme JS files -->
 	
 	@yield('head-js')

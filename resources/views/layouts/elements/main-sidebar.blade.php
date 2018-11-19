@@ -9,9 +9,11 @@
                     <a href="#" class="media-left"></a>
                     <div class="media-body">
                         <span class="media-heading text-semibold">{{Auth::user()->email}}</span>
+                        
                         <div class="text-size-mini text-muted">
                             <i class="icon-pin text-size-small"></i> &nbsp;{{Auth::user()->name}}
                         </div>
+          
                     </div>
 
                     <div class="media-right media-middle">
@@ -38,7 +40,7 @@
                         <a href="#"><i class="icon-user"></i> <span>Nhân viên</span></a>
                         <ul>
                             <li><a href="layout_navbar_fixed.html">Thêm mới</a></li>
-                            <li><a href="layout_navbar_sidebar_fixed.html">Quản lý</a></li>
+                            <li><a href="{{ url('admin/usermanagement') }}">Quản lý</a></li>
                         </ul>
                     </li>
                     <li>

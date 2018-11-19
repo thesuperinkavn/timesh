@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use App\Model\Admin;
 
 class User extends Authenticatable
 {
@@ -15,7 +16,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'email', 'password', 'leader_id', 'description', 'active', 'avatar', 'role', 'approve', 'notify_accounts'
     ];
 
     /**
@@ -26,4 +27,12 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    public function leader()
+    {
+        
+        return $this->belongsTo('App\User', 'leader_id')->withDefault([
+            'name' => 'Không có quản lý',
+        ]);
+    }
 }

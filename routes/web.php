@@ -27,4 +27,10 @@ Route::prefix('admin')->group(function() {
     Route::any('/approve', 'AdminController@approve')->name('admin.approve');
     Route::any('/unapprove', 'AdminController@unapprove')->name('admin.unapprove');
     Route::any('/dashboard', 'Admin\AdminController@index')->name('admin.home');
+    Route::any('/usermanagement', 'Admin\UserManagement@index');
+    Route::post('/usermanagement/action', 'Admin\UserManagement@action');
+    Route::post('/usermanagement/add', 'Admin\UserManagement@add');
+    Route::post('/usermanagement/edit', 'Admin\UserManagement@edit');
+    Route::post('/usermanagement/destroy', 'Admin\UserManagement@destroy');
+
 });
