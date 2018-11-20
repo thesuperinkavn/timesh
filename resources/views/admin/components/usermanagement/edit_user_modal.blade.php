@@ -68,7 +68,7 @@
         <div class="modal-footer">
     
             <button type="button" class="btn btn-link" data-dismiss="modal">Close</button>
-            <button type="button" id="add" class="btn btn-primary">Submit</button>
+            <button type="button" id="edit" class="btn btn-primary">Submit</button>
         </div>
     </form>
     
@@ -97,7 +97,7 @@
             $(document).ready(function(){
                 
             // when click submit
-            $('#add').click(function(){
+            $('#edit').click(function(){
                 var id = '{{$info->id}}';
                 var name            = $('#name').val();
                 var email           = $('#email').val();

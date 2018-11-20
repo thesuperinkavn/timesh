@@ -38,8 +38,9 @@ Route::prefix('admin')->group(function() {
 
 Route::prefix('')->group(function() {
     Route::any('/task', 'User\TaskController@index');
-    Route::post('/usermanagement/add', 'Admin\UserManagement@add');
-    Route::post('/usermanagement/edit', 'Admin\UserManagement@edit');
-    Route::post('/usermanagement/destroy', 'Admin\UserManagement@destroy');
+    Route::post('/task/action', 'User\TaskController@action');
+    Route::post('/task/add', 'User\TaskController@add');
+    Route::post('/task/edit', 'User\TaskController@edit');
+    Route::post('/task/destroy', 'User\TaskController@destroy');
 
 });

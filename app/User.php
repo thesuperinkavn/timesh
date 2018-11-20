@@ -35,4 +35,11 @@ class User extends Authenticatable
             'name' => 'Không có quản lý',
         ]);
     }
+
+    public function assignee()
+    {
+        return $this->hasMany('App\User', 'leader_id');
+    }
+
+
 }

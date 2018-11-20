@@ -13,6 +13,21 @@ class Task extends Model
         'description',
         'active',
         'created_by',
-        'assign_to'
+        'assign_to',
+        'priority',
+        'status'
     ];
+
+    public function assignee()
+    {
+        
+        return $this->belongsTo('App\User', 'assign_to','id')->withDefault([
+            'name' => 'Không chọn',
+        ]);
+    }
+
+    public function creator()
+    {
+        return $this->belongsTo('App\User', 'created_by', 'id');
+    }
 }
