@@ -16,6 +16,7 @@ class AddFixToTimesheetsTable extends Migration
         Schema::table('timesheets', function (Blueprint $table) {
             //
             $table->string('name')->nullable()->change();
+            $table->renameColumn('relase_date', 'release_date');
         });
     }
 

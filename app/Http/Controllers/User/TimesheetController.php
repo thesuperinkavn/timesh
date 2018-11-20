@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\User;
 use DB;
+use App\Model\Task;
 use App\Model\Timesheet;
 use App\Model\Timesheet_detail;
 use Auth;
@@ -70,13 +71,64 @@ class TimesheetController extends Controller
         return redirect('/timesheet')->with('success', 'Thêm mới thành công');
     }
 
-    public function addtask()
+    public function addtask(Request $request)
     {
-        $params = [
-            'title'          => 'Thêm task cho timesheet',
-            'js'             => 'user.components.timesheet.js',
-            'css'            => 'user.components.timesheet.css'
-        ];
-        return view('user.pages.addtask')->with($params);
+        if($request->input('id')){
+            $time_sheet_id = $request->input('id');
+            $info_timesheet = Timesheet::find($time_sheet_id);
+        
+
+            $params = [
+                'title'          => 'Thêm task cho timesheet',
+                'js'             => 'user.components.timesheet.js',
+                'css'            => 'user.components.timesheet.css',
+                'info_timesheet' => $info_timesheet
+            ];
+            return view('user.pages.addtask')->with($params);
+        }
+
+    }
+
+    public function addtask_action(Request $request)
+    {
+        $action = $request->input('action');
+        $tasks = Task::all();
+        $users = User::all();
+
+        $id_user = Auth::user()->id;
+        $info_user = User::find($id_user);
+
+        $list_tasks_assign = DB::table('tasks')->where('assign_to',$id_user)->get();
+
+        $assignees = $info_user->assignee;
+        switch ($action) {
+            case 'add':
+                $params = [
+                    'title'     => 'Thêm task vào timesheet',
+                    'users'     => $users,
+                    'info_user' => $info_user,
+                    'assignees' => $assignees,
+                    'id_user'   => $id_user,
+                    'list_tasks_assign' => $list_tasks_assign
+                ];
+                return view('user.components.timesheet.add_task_to_timesheet_modal')->with($params);
+                break;
+            case 'edit':
+                $id_task = $request->input('id');
+                $info_task = Task::find($id_task);
+                $params = [
+                    'title'     => 'Sửa thông tin task',
+                    'users'     => $users,
+                    'assignees' => $assignees,
+                    'info_user' => $info_user,
+                    'info_task' => $info_task,
+                    'id_task'   => $id_task
+                ];
+                return view('user.components.task.edit_task_modal')->with($params);
+                break;         
+            default:
+                # code...
+                break;
+        }
     }
 }

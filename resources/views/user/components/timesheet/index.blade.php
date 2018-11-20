@@ -61,7 +61,7 @@
                             <ul class="dropdown-menu dropdown-menu-right">
                                 <li><a class="openModal" data-toggle="modal" data-target="#actionmodal" data-action="edit" data-id="<?=$timesheet->id ?>"><i class="icon-pencil7"></i> Sửa nội dung</a></li>
                                 <li class="divider"></li>
-                                <li><a href="{{ url('timesheet/addtask') }}" id="addtask" data-id="<?=$timesheet->id?>"><i class="icon-plus-circle2"></i> Thêm task</a></li>
+                                <li><a href="{{ url('timesheet/addtask?id='.$timesheet->id) }}" id="addtask" data-id="<?=$timesheet->id?>"><i class="icon-plus-circle2"></i> Thêm task</a></li>
                             </ul>
                         </li>
                     </ul>

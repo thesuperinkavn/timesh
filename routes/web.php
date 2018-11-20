@@ -47,3 +47,5 @@ Route::any('timesheet', 'User\TimesheetController@index');
 Route::any('timesheet/create', 'User\TimesheetController@create');
 Route::post('timesheet/store', 'User\TimesheetController@store');
 Route::any('timesheet/addtask', 'User\TimesheetController@addtask');
+Route::post('timesheet/addtask_action', 'User\TimesheetController@addtask_action');
+Route::get('timesheet/addtask/{id}', 'User\TimesheetController@addtask');
