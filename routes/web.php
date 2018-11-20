@@ -36,11 +36,14 @@ Route::prefix('admin')->group(function() {
 });
 
 
-Route::prefix('')->group(function() {
-    Route::any('/task', 'User\TaskController@index');
-    Route::post('/task/action', 'User\TaskController@action');
-    Route::post('/task/add', 'User\TaskController@add');
-    Route::post('/task/edit', 'User\TaskController@edit');
-    Route::post('/task/destroy', 'User\TaskController@destroy');
+Route::any('/task', 'User\TaskController@index');
+Route::post('/task/action', 'User\TaskController@action');
+Route::post('/task/add', 'User\TaskController@add');
+Route::post('/task/edit', 'User\TaskController@edit');
+Route::post('/task/destroy', 'User\TaskController@destroy');
 
-});
+
+Route::any('timesheet', 'User\TimesheetController@index');
+Route::any('timesheet/create', 'User\TimesheetController@create');
+Route::post('timesheet/store', 'User\TimesheetController@store');
+Route::any('timesheet/addtask', 'User\TimesheetController@addtask');

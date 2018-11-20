@@ -48,4 +48,17 @@
         }
     }
 
+    function timesheet_status($status)
+    {
+        switch ($status) {
+            case '0':
+                return "<div class=\"label label-danger\">Chưa duyệt</div>";
+                break;
+            
+            default:
+                return "<div class=\"label label-success\">Đã duyệt</div>";
+                break;
+        }
+    }
+
 ?>

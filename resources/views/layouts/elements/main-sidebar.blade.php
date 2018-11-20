@@ -51,7 +51,7 @@
                     </li>
                     @endif
                     <li>
-                        <a href="#"><i class="icon-copy"></i> <span>Timesheet</span></a>
+                        <a href="{{ url('timesheet') }}"><i class="icon-copy"></i> <span>Timesheet</span></a>
                     </li>
                     @if (Auth::guard('admin')->check())
                     <li>
