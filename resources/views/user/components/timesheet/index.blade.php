@@ -37,7 +37,11 @@
                 <td>#{{ $timesheet->id }}</td>
                 <td>Tất cả</td>
                 <td>
-                    <div class="text-semibold"><a href="#">{{ $timesheet->name }}</a></div>
+                    <div class="text-semibold">
+                        <a class="openModal" data-toggle="modal" data-target="#actionmodal" data-action="show" data-id="{{ $timesheet->id }}">
+                            {{ $timesheet->name }}
+                        </a>
+                    </div>
                     <div class="text-muted">{{ $timesheet->description }}</div>
                 </td>
                 <td>{{ $timesheet->creator->name }}</td>
@@ -59,7 +63,7 @@
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-menu9"></i></a>
                             <ul class="dropdown-menu dropdown-menu-right">
-                                <li><a class="openModal" data-toggle="modal" data-target="#actionmodal" data-action="edit" data-id="<?=$timesheet->id ?>"><i class="icon-pencil7"></i> Sửa nội dung</a></li>
+                                <li><a href="{{ url('timesheet/edit?id='.$timesheet->id) }}" id="addtask" data-id="<?=$timesheet->id?>"><i class="icon-pencil7"></i> Sửa nội dung</a></li>
                                 <li class="divider"></li>
                                 <li><a href="{{ url('timesheet/addtask?id='.$timesheet->id) }}" id="addtask" data-id="<?=$timesheet->id?>"><i class="icon-plus-circle2"></i> Thêm task</a></li>
                             </ul>
@@ -92,6 +96,7 @@ $(document).ready(function(){
     $('.openModal').click(function(){
         var id = $(this).attr('data-id');
         var action = $(this).attr('data-action');
+
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -99,8 +104,8 @@ $(document).ready(function(){
         });
         $.ajax({
             method: 'POST', // Type of response and matches what we said in the route
-            url: '/task/action', // This is the url we gave in the route
-            data: {'id' : id, 'action':action}, // a JSON object to send back
+            url: '/timesheet/show', // This is the url we gave in the route
+            data: {'id' : id}, // a JSON object to send back
             success: function(response){ // What to do if we succeed
                 //console.log(response);
                 $(".modal-content").html(response); 

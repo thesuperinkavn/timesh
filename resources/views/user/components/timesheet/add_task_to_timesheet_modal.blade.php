@@ -2,7 +2,6 @@
     <button type="button" class="close" data-dismiss="modal">&times;</button>
     <h5 class="modal-title">{{$title}}</h5>
 </div>
-
 <form action="#" class="form-horizontal">
     <div class="modal-body">
         <div class="form-group">
@@ -26,7 +25,7 @@
         <div class="form-group">
             <label class="control-label col-sm-12 col-md-3">Thời gian</label>
             <div class="col-sm-12 col-md-3">
-                <select class="basic-single select select-fixed-single" id="priority" name="state">
+                <select class="basic-single select select-fixed-single" id="duration" name="duration">
                     <option value="1">1 tiếng</option>
                     <option value="2">2 tiếng</option>
                     <option value="3">3 tiếng</option>
@@ -68,4 +67,59 @@
         });
         
     });
+</script>
+
+<script>
+    $(document).ready(function(){
+        
+    // when click submit
+    $('#add').click(function(){
+        var task            = $('#task').val();
+        var description     = $('#description').val();
+        var duration        = $('#duration').val();
+        var timesheet_id    = '{{ $timesheet_id }}';
+
+        $.ajax({
+            type : "POST",
+            dataType : "JSON",
+            url: "{{ url('timesheet/addTaskToTimeSheet') }}",
+            data : {
+                task            : task,
+                content     : description,
+                duration        : duration,
+                timesheet_id    : timesheet_id
+            },
+            success : function(result)
+            {
+                // Có lỗi, tức là key error = 1
+                if (result.hasOwnProperty('error') && result.error == '1'){
+                    var html = '';
+ 
+                    // Lặp qua các key và xử lý nối lỗi
+                    $.each(result, function(key, item){
+                        // Tránh key error ra vì nó là key thông báo trạng thái
+                        if (key != 'error'){ 
+                            html += '<p  class="text-semibold">'+item+'</p>';
+                        }
+                    });
+                    $('.alert-danger').html(html).removeClass('hide');
+                    $('.alert-success').addClass('hide');
+                }
+                else{ // Thành công
+                    $('.alert-success').html('Dữ liệu đang được thêm vào!').removeClass('hide');
+                    $('.alert-danger').addClass('hide');
+ 
+                    // 4 giay sau sẽ tắt popup
+                    setTimeout(function(){
+                        $('#actionmodal').modal('hide');
+                        // Ẩn thông báo lỗi
+                        $('.alert-danger').addClass('hide');
+                        $('.alert-success').addClass('hide');
+                        location.reload(); // then reload the page.
+                    }, 2000);
+                }
+            }
+        });
+    });
+});
 </script>

@@ -4,7 +4,7 @@ namespace App\Model;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Timesheet_detail extends Model
+class Task_timesheet extends Model
 {
     //
     protected $fillable = [

@@ -20,4 +20,9 @@ class Timesheet extends Model
         return $this->belongsTo('App\User', 'created_by', 'id');
     }
 
+    public function tasks()
+    {
+        return $this->belongsToMany('App\Model\Task')->withPivot('id','duration','content')->withTimestamps();
+    }
+
 }

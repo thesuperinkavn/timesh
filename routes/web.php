@@ -45,7 +45,12 @@ Route::post('/task/destroy', 'User\TaskController@destroy');
 
 Route::any('timesheet', 'User\TimesheetController@index');
 Route::any('timesheet/create', 'User\TimesheetController@create');
+Route::any('timesheet/edit', 'User\TimesheetController@edit');
 Route::post('timesheet/store', 'User\TimesheetController@store');
+Route::post('timesheet/update', 'User\TimesheetController@update');
+Route::post('timesheet/show', 'User\TimesheetController@show');
 Route::any('timesheet/addtask', 'User\TimesheetController@addtask');
 Route::post('timesheet/addtask_action', 'User\TimesheetController@addtask_action');
 Route::get('timesheet/addtask/{id}', 'User\TimesheetController@addtask');
+Route::post('timesheet/addTaskToTimeSheet', 'User\TimesheetController@addTaskToTimeSheet');
+Route::post('timesheet/removeTaskFromTimeSheet', 'User\TimesheetController@removeTaskFromTimeSheet');

@@ -8,7 +8,7 @@ use App\User;
 use DB;
 use App\Model\Task;
 use App\Model\Timesheet;
-use App\Model\Timesheet_detail;
+use App\Model\Task_timesheet;
 use Auth;
 use Carbon\Carbon;
 use App\Rules\Dateunique;
@@ -36,9 +36,20 @@ class TimesheetController extends Controller
     }
 
    
-    public function show($id)
+    public function show(Request $request)
     {
         //
+        $timesheet_id = $request->input('id');
+        $info_timesheet = Timesheet::find($timesheet_id);
+
+        $list_tasks_added = Timesheet::find($timesheet_id)->tasks;
+
+        $params = [
+            'title'            => 'Hiển thị thông tin timesheet',
+            'info_timesheet'   => $info_timesheet,
+            'list_tasks_added' => $list_tasks_added
+        ];
+        return view('user.components.timesheet.show_timesheet_modal')->with($params);
     }
     public function create()
     {
@@ -49,7 +60,6 @@ class TimesheetController extends Controller
         ];
         return view('user.pages.timesheet-create')->with($params);
     }
-
 
     public function store(Request $request)
     {
@@ -65,24 +75,72 @@ class TimesheetController extends Controller
             'name' => $request->get('name'),
             'description'=> $request->get('description'),
             'release_date' => $newformat,
+            'issue'     => $request->get('issue'),
+            'plan'     => $request->get('plan'),
             'created_by'=> Auth::id()
         ]);
         $timesheet->save();
         return redirect('/timesheet')->with('success', 'Thêm mới thành công');
     }
 
+    public function edit(Request $request)
+    {
+        $timesheet_id = $request->input('id');
+        $info_timesheet = Timesheet::find($timesheet_id);
+
+        $params = [
+            'title'          => 'Sửa thông tin timesheet',
+            'js'             => 'user.components.timesheet.create-js',
+            'css'            => 'user.components.timesheet.create-css',
+            'info_timesheet' => $info_timesheet
+        ];
+        return view('user.pages.timesheet-edit')->with($params);
+    }
+
+    public function update(Request $request)
+    {
+        $timesheet_id = $request->input('id');
+        $timesheet = Timesheet::find($timesheet_id);
+
+        $time = strtotime($request->get('release_date'));
+        $newformat = date('Y-m-d',$time);
+
+        if(strtotime($newformat) != strtotime($timesheet->release_date)){
+            $request->validate([
+                'release_date' => ['required', new Dateunique],
+            ]);
+        }
+        
+        $request->validate([
+            'release_date' => ['required']
+        ]);
+
+        $timesheet->name = $request->get('name');
+        $timesheet->description = $request->get('description');
+        $timesheet->release_date = $newformat;
+        $timesheet->issue = $request->get('issue');
+        $timesheet->plan = $request->get('plan');
+        $timesheet->approve = '0';
+        $timesheet->updated_at = Carbon::now();
+
+        $timesheet->save();
+        return redirect('/timesheet')->with('success', 'Sửa thông tin thành công');
+    }
+
     public function addtask(Request $request)
     {
         if($request->input('id')){
-            $time_sheet_id = $request->input('id');
-            $info_timesheet = Timesheet::find($time_sheet_id);
-        
+            $timesheet_id = $request->input('id');
+            $info_timesheet = Timesheet::find($timesheet_id);
+           
+            $list_tasks_added = Timesheet::find($timesheet_id)->tasks;
 
             $params = [
-                'title'          => 'Thêm task cho timesheet',
-                'js'             => 'user.components.timesheet.js',
-                'css'            => 'user.components.timesheet.css',
-                'info_timesheet' => $info_timesheet
+                'title'            => 'Thêm task cho timesheet',
+                'js'               => 'user.components.timesheet.js',
+                'css'              => 'user.components.timesheet.css',
+                'info_timesheet'   => $info_timesheet,
+                'list_tasks_added' => $list_tasks_added
             ];
             return view('user.pages.addtask')->with($params);
         }
@@ -92,24 +150,16 @@ class TimesheetController extends Controller
     public function addtask_action(Request $request)
     {
         $action = $request->input('action');
-        $tasks = Task::all();
-        $users = User::all();
+        $timesheet_id = $request->input('id');
+        $user_id = Auth::id();
+        $list_tasks_assign = DB::table('tasks')->where('assign_to',$user_id)->get();
 
-        $id_user = Auth::user()->id;
-        $info_user = User::find($id_user);
-
-        $list_tasks_assign = DB::table('tasks')->where('assign_to',$id_user)->get();
-
-        $assignees = $info_user->assignee;
         switch ($action) {
             case 'add':
                 $params = [
                     'title'     => 'Thêm task vào timesheet',
-                    'users'     => $users,
-                    'info_user' => $info_user,
-                    'assignees' => $assignees,
-                    'id_user'   => $id_user,
-                    'list_tasks_assign' => $list_tasks_assign
+                    'list_tasks_assign' => $list_tasks_assign,
+                    'timesheet_id'     => $timesheet_id
                 ];
                 return view('user.components.timesheet.add_task_to_timesheet_modal')->with($params);
                 break;
@@ -130,5 +180,58 @@ class TimesheetController extends Controller
                 # code...
                 break;
         }
+
+    }
+
+    public function addTaskToTimeSheet(Request $request)
+    {
+        $errors  = array('error' => 0);
+
+        $task_id = $request->input('task');
+        $content = $request->input('content');
+        $duration = $request->input('duration');
+        $timesheet_id = $request->input('timesheet_id');
+
+        $info= DB::table('task_timesheet')
+            ->where('timesheet_id',$timesheet_id)
+            ->where('task_id',$task_id)
+            ->get();
+
+        if(count($info)){
+            $errors['error'] = 1;
+            $errors['err'] = 'Task này đã được tạo trong timesheet';
+            return response()->json($errors);
+        }
+        else {
+            $timesheet = Timesheet::find($timesheet_id);
+            $timesheet->tasks()->attach($task_id, ['content'=> $content, 'duration'=> $duration]); //this executes the insert-query
+            
+            //$timesheet = Timesheet::find($timesheet_id);
+            $timesheet->approve = '0';
+            $timesheet->updated_at = Carbon::now();
+            $timesheet->save();
+    
+            return response()->json($errors);
+        }
+        
+    }
+
+    public function removeTaskFromTimeSheet(Request $request)
+    {
+        $errors  = array('error' => 0);
+        $id = $request->input('id');
+        $timesheet_id = $request->input('timesheet');
+        $task_id = $request->input('task_id');
+
+        $timesheet = Timesheet::find($timesheet_id);
+        $timesheet->tasks()->detach($task_id); //this executes the insert-query
+
+        //$timesheet = Timesheet::find($timesheet_id);
+        $timesheet->approve = '0';
+        $timesheet->updated_at = Carbon::now();
+        $timesheet->save();
+
+        return response()->json($errors);
+
     }
 }

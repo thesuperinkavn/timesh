@@ -30,4 +30,9 @@ class Task extends Model
     {
         return $this->belongsTo('App\User', 'created_by', 'id');
     }
+
+    public function timesheets()
+    {
+        return $this->belongsToMany('App\Model\Timesheet');
+    }
 }
