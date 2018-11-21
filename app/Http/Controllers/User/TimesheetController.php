@@ -12,6 +12,7 @@ use App\Model\Task_timesheet;
 use Auth;
 use Carbon\Carbon;
 use App\Rules\Dateunique;
+use App\Rules\Righttime;
 
 class TimesheetController extends Controller
 {
@@ -65,7 +66,7 @@ class TimesheetController extends Controller
     {
 
         $request->validate([
-            'release_date' => ['required', new Dateunique],
+            'release_date' => ['required', new Dateunique, new Righttime],
         ]);
 
         $time = strtotime($request->get('release_date'));
@@ -233,5 +234,28 @@ class TimesheetController extends Controller
 
         return response()->json($errors);
 
+    }
+
+    public function reviewTimeSheet(Request $request)
+    {
+        $user_id = Auth::id();
+        $role = Auth::user()->role;
+        if($role < 3){
+            return redirect('/timesheet')->with('success', 'Bạn không có quyền vào trang này');
+        }
+        else {
+            $timesheets = DB::table('timesheets')
+                ->where('assign_to',$user_id)
+                ->get();
+
+            $params = [
+                'title'            => 'Duyệt timesheet',
+                'js'               => 'user.components.timesheet.js',
+                'css'              => 'user.components.timesheet.css',
+                'info_timesheet'   => $info_timesheet,
+                'list_tasks_added' => $list_tasks_added
+            ];
+            return view('user.pages.addtask')->with($params);
+        }
     }
 }

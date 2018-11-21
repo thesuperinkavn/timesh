@@ -36,8 +36,8 @@
                 <div class="col-sm-12 col-md-3">
                     <select class="basic-single select select-fixed-single" id="leader" name="state">
                         <option value="" {{ ($info->leader_id == null) ? 'selected' : '' }}>Không có quản lý</option>
-                        @foreach($users as $user)
-                        <option value="{{ $user->id }}" {{ ($info->leader_id == $user->id) ? 'selected' : '' }}>{{ $user->name }}</option>
+                        @foreach($leaders as $leader)
+                        <option value="{{ $leader->id }}" {{ ($info->leader_id == $leader->id) ? 'selected' : '' }}>{{ $leader->name }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -47,7 +47,8 @@
                 <label class="control-label col-sm-12 col-md-3">Role</label>
                 <div class="col-sm-12 col-md-3">
                     <select class="basic-single select select-fixed-single" id="role" name="state">
-                        <option value="2">Nhân viên</option>
+                        <option value="2" {{ ($info->role == 2) ? 'selected' : '' }}>Nhân viên</option>
+                        <option value="3" {{ ($info->role == 3) ? 'selected' : '' }}>Leader</option>
                     </select>
                 </div>
             </div>

@@ -36,8 +36,8 @@
             <div class="col-sm-12 col-md-3">
                 <select class="basic-single select select-fixed-single" id="leader" name="state">
                     <option value="">Không có quản lý</option>
-                    @foreach($users as $users)
-                    <option value="{{ $users->id }}">{{ $users->name }}</option>
+                    @foreach($leaders as $leader)
+                    <option value="{{ $leader->id }}">{{ $leader->name }}</option>
                     @endforeach
                 </select>
             </div>
@@ -48,6 +48,7 @@
             <div class="col-sm-12 col-md-3">
                 <select class="basic-single select select-fixed-single" id="role" name="state">
                     <option value="2">Nhân viên</option>
+                    <option value="3">Leader</option>
                 </select>
             </div>
         </div>

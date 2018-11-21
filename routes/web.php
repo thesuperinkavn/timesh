@@ -54,3 +54,5 @@ Route::post('timesheet/addtask_action', 'User\TimesheetController@addtask_action
 Route::get('timesheet/addtask/{id}', 'User\TimesheetController@addtask');
 Route::post('timesheet/addTaskToTimeSheet', 'User\TimesheetController@addTaskToTimeSheet');
 Route::post('timesheet/removeTaskFromTimeSheet', 'User\TimesheetController@removeTaskFromTimeSheet');
+
+Route::any('/report', 'User\ReportController@index');

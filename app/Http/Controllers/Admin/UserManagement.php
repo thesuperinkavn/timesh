@@ -34,22 +34,27 @@ class UserManagement extends Controller
     {
         $action = $request->input('action');
         $users = User::all();
+        
 
         switch ($action) {
             case 'add':
+                $leaders = DB::table('users')->where('role',3)->get();
                 $params = [
                     'title' => 'Thêm mới nhân viên',
-                    'users' => $users
+                    'users' => $users,
+                    'leaders' => $leaders
                 ];
                 return view('admin.components.usermanagement.add_user_modal')->with($params);
                 break;
             case 'edit':
                 $id = $request->input('id');
                 $info = User::find($id);
+                $leaders = DB::table('users')->where('role',3)->where('id','<>',$id)->get();
                 $params = [
                     'title' => 'Sửa thông tin nhân viên',
                     'users' => $users,
-                    'info'  => $info
+                    'info'  => $info,
+                    'leaders' => $leaders
                 ];
                 return view('admin.components.usermanagement.edit_user_modal')->with($params);
                 break;         

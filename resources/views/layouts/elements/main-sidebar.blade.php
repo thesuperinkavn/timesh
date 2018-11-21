@@ -51,8 +51,19 @@
                     </li>
                     @endif
                     <li>
-                        <a href="{{ url('timesheet') }}"><i class="icon-copy"></i> <span>Timesheet</span></a>
+                        <a href="#"><i class="icon-copy"></i> <span>Timesheet</span></a>
+                        <ul>
+                            <li><a href="{{ url('timesheet') }}">Timesheet của tôi</a></li>
+                            @if (Auth::user()->role == 3)
+                            <li><a href="{{ url('timesheet') }}">Duyệt timesheet</a></li>
+                            @endif
+                        </ul>
                     </li>
+                    @if (Auth::guard()->check())
+                    <li>
+                        <a href="{{ url('report') }}"><i class="icon-pie-chart2"></i> <span>Báo cáo</span></a>
+                    </li>
+                    @endif
                     @if (Auth::guard('admin')->check())
                     <li>
                         <a href="#"><i class="icon-cog3"></i> <span>Hệ thống</span></a>
