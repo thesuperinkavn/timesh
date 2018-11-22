@@ -13,6 +13,7 @@ use Auth;
 use Carbon\Carbon;
 use App\Rules\Dateunique;
 use App\Rules\Righttime;
+use Mail;
 
 class TimesheetController extends Controller
 {
@@ -84,6 +85,7 @@ class TimesheetController extends Controller
             'created_by'=> Auth::id()
         ]);
         $timesheet->save();
+        $this->sendEmailReminder(Auth::id(),'1',$newformat);
         return redirect('/timesheet')->with('success', 'Thêm mới thành công');
     }
 
@@ -128,6 +130,7 @@ class TimesheetController extends Controller
         $timesheet->updated_at = Carbon::now();
 
         $timesheet->save();
+        $this->sendEmailReminder(Auth::id(),'2',$timesheet->release_date);
         return redirect('/timesheet')->with('success', 'Sửa thông tin thành công');
     }
 
@@ -308,4 +311,45 @@ class TimesheetController extends Controller
             return response()->json($errors);
         }
     }
+
+    public function sendEmailReminder($id,$type, $release_date)
+    {
+
+
+        //$id = $request->input('id');
+        $user = User::findOrFail($id);
+        $leader = $user->leader;
+
+        $to_name = $leader->name;
+        $to_email = $leader->email;
+
+        $title ='';
+
+        switch ($type) {
+            case '1':
+                $title = $user->name.' vừa tạo timesheet mới cho ngày '.$release_date;
+                break;
+            
+            case '2':
+                $title = $user->name.' vừa sửa timesheet ngày '.$release_date;
+                break;
+        }
+
+        $data = array('name'=>$leader->name, "body" => "Đây là thông báo tự động");
+
+        Mail::send('user.components.email.index', $data, function($message) use ($to_name, $to_email, $title, $user) {
+            $message->to($to_email, $to_name)
+                    ->subject($title);
+            $message->from($user->email,$user->name);
+        });
+
+        // Mail::raw('Sending emails with Mailgun and Laravel is easy!', function($message)
+        // {
+        //     $message->subject('Mailgun and Laravel are awesome!');
+        //     $message->from('no-reply@website_name.com', 'Website Name');
+        //     $message->to('johndoe@gmail.com');
+        // });
+    }
+
+    
 }
