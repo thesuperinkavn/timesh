@@ -4,6 +4,7 @@ namespace App\Rules;
 
 use Illuminate\Contracts\Validation\Rule;
 use App\Model\Timesheet;
+use Auth;
 
 class Dateunique implements Rule
 {
@@ -30,7 +31,7 @@ class Dateunique implements Rule
         $time = strtotime($value);
         $newformat = date('Y-m-d',$time);
 
-        return (!Timesheet::where('release_date', '=', $newformat)->exists());
+        return (!Timesheet::where('release_date', '=', $newformat)->where('created_by','=',Auth::id())->exists());
     }
 
     /**

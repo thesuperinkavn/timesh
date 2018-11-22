@@ -79,7 +79,10 @@
 <script>
     var all = '{{ count($timesheet_this_month) }}';
     var ontime = '{{ count($timesheet_on_time_this_month) }}';
-    var result = (all / ontime) / 10;
+    var result;
+    if(ontime == 0) result =0;
+    else result = (ontime / all);
+    console.log(result);
     progressIcon('#progress_icon_one', 42, 2.5, "#eee", "#EF5350", result, "icon-heart6");
     
     // Chart setup

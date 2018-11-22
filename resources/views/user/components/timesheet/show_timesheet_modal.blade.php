@@ -82,7 +82,7 @@
                 {{ $info_timesheet->release_date }}
             </span>
 
-            <span class="heading-text pull-right label label-danger">
+            <span class="heading-text pull-right label">
                 {!! timesheet_status($info_timesheet->approve) !!}
             </span>
         </div>

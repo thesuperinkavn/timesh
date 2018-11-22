@@ -24,9 +24,12 @@ class ReportController extends Controller
 
     public function index()
     {
+        $user_id = Auth::id();
+
         // Get timesheet this month
         $timesheet_this_month = DB::table('timesheets')
             ->whereMonth('release_date', '=', date('m'))
+            ->where('created_by','=',$user_id)
             ->get();
 
         //get total day this month
@@ -37,11 +40,12 @@ class ReportController extends Controller
 
         // Get timesheet late this month
         $timesheet_on_time_this_month = DB::select(
-            "SELECT * from `timesheets` 
-             WHERE `release_date` = DATE(created_at) 
-             AND `release_date` = DATE(updated_at) 
+            "SELECT * FROM timesheets
+             WHERE release_date = DATE(created_at)
+             AND release_date = DATE(updated_at) 
              AND DATE_FORMAT(created_at,'%H:%i:%s') <='18:00:00' 
-             AND DATE_FORMAT(updated_at,'%H:%i:%s') <= '19:00:00'");
+             AND DATE_FORMAT(updated_at,'%H:%i:%s') <= '19:00:00'
+             AND created_by = ".$user_id);
 
         $params = [
             'title'          => 'Báo cáo',

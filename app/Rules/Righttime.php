@@ -28,9 +28,9 @@ class Righttime implements Rule
     {
         //
         $time = strtotime($value);
-        //$newformat = date('Y-m-d',$time);
+        $newformat = date('Y-m-d',$time);
 
-        return ($time <= strtotime(now()));
+        return ($newformat <= date('Y-m-d',strtotime(now())));
     }
 
     /**

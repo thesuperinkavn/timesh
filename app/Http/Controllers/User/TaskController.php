@@ -20,10 +20,10 @@ class TaskController extends Controller
 
     public function index()
     {
-        $tasks = Task::all();
-
         $id = Auth::user()->id;
         $user = User::find($id);
+
+        $tasks = Task::where('created_by',$id)->get();
 
         $params = [
             'title'          => 'Quản lý task',

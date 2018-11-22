@@ -56,3 +56,7 @@ Route::post('timesheet/addTaskToTimeSheet', 'User\TimesheetController@addTaskToT
 Route::post('timesheet/removeTaskFromTimeSheet', 'User\TimesheetController@removeTaskFromTimeSheet');
 
 Route::any('/report', 'User\ReportController@index');
+Route::any('/timesheet/review', 'User\TimesheetController@reviewTimeSheet');
+
+Route::post('timesheet/review/approve', 'User\TimesheetController@approve');
+Route::post('timesheet/review/unapprove', 'User\TimesheetController@unapprove');

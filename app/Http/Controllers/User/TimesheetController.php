@@ -25,7 +25,9 @@ class TimesheetController extends Controller
 
     public function index()
     {
-        $timesheets = Timesheet::all();
+        $user_id = Auth::id();
+        $timesheets = Timesheet::where('created_by',$user_id)->get();
+        //print_r($timesheets);
 
         $params = [
             'title'          => 'Quản lý timesheet',
@@ -40,6 +42,7 @@ class TimesheetController extends Controller
     public function show(Request $request)
     {
         //
+        
         $timesheet_id = $request->input('id');
         $info_timesheet = Timesheet::find($timesheet_id);
 
@@ -244,18 +247,65 @@ class TimesheetController extends Controller
             return redirect('/timesheet')->with('success', 'Bạn không có quyền vào trang này');
         }
         else {
-            $timesheets = DB::table('timesheets')
-                ->where('assign_to',$user_id)
-                ->get();
-
+            $timesheets = DB::select(
+                "SELECT timesheets.*, users.id as user_id, users.name as user_name
+                FROM timesheets
+                JOIN (SELECT * FROM users WHERE leader_id = '.$user_id.') AS users
+                ON timesheets.created_by = users.id
+                WHERE created_by <> ".$user_id);
+            //print_r($timesheets);
             $params = [
                 'title'            => 'Duyệt timesheet',
                 'js'               => 'user.components.timesheet.js',
                 'css'              => 'user.components.timesheet.css',
-                'info_timesheet'   => $info_timesheet,
-                'list_tasks_added' => $list_tasks_added
+                'timesheets'       => $timesheets
             ];
-            return view('user.pages.addtask')->with($params);
+            return view('user.pages.timesheet-review')->with($params);
+        }
+    }
+
+    public function approve(Request $request)
+    {
+        $errors  = array('error' => 0);
+        if ($request->input('id')) {
+            
+            $id = $request->input('id');
+            try
+            {
+                $timesheet = Timesheet::find($id);
+                $timesheet->approve = 1;
+                $timesheet->save();
+            }
+            catch (ModelNotFoundException $ex) 
+            {
+                if ($ex instanceof ModelNotFoundException)
+                {
+                    $errors['errors'] = 1;
+                }
+            }
+            return response()->json($errors);
+        }
+    }
+    public function unapprove(Request $request)
+    {
+        $errors  = array('error' => 0);
+        if ($request->input('id')) {
+            
+            $id = $request->input('id');
+            try
+            {
+                $timesheet = Timesheet::find($id);
+                $timesheet->approve = 0;
+                $timesheet->save();
+            }
+            catch (ModelNotFoundException $ex) 
+            {
+                if ($ex instanceof ModelNotFoundException)
+                {
+                    $errors['errors'] = 1;
+                }
+            }
+            return response()->json($errors);
         }
     }
 }

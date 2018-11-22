@@ -40,26 +40,26 @@
                     <li>
                         <a href="#"><i class="icon-user"></i> <span>Nhân viên</span></a>
                         <ul>
-                            <li><a href="layout_navbar_fixed.html">Thêm mới</a></li>
                             <li><a href="{{ url('admin/usermanagement') }}">Quản lý</a></li>
                         </ul>
                     </li>
                     @endif
-                    @if (Auth::guard()->check())
+                    @if (Auth::guard()->check() && !Auth::guard('admin')->check())
                     <li>
                         <a href="{{ url('task') }}"><i class="icon-task"></i> <span>Quản lí task</span></a>
                     </li>
-                    @endif
                     <li>
                         <a href="#"><i class="icon-copy"></i> <span>Timesheet</span></a>
                         <ul>
                             <li><a href="{{ url('timesheet') }}">Timesheet của tôi</a></li>
                             @if (Auth::user()->role == 3)
-                            <li><a href="{{ url('timesheet') }}">Duyệt timesheet</a></li>
+                            <li><a href="{{ url('timesheet/review') }}">Duyệt timesheet</a></li>
                             @endif
                         </ul>
                     </li>
-                    @if (Auth::guard()->check())
+                    @endif
+
+                    @if (Auth::guard()->check() && !Auth::guard('admin')->check())
                     <li>
                         <a href="{{ url('report') }}"><i class="icon-pie-chart2"></i> <span>Báo cáo</span></a>
                     </li>
