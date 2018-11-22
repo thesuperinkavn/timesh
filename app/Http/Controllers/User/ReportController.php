@@ -11,6 +11,7 @@ use App\Model\Timesheet;
 use App\Model\Task_timesheet;
 use Auth;
 use Carbon\Carbon;
+use App\Model\Setting;
 
 
 class ReportController extends Controller
@@ -25,6 +26,18 @@ class ReportController extends Controller
     public function index()
     {
         $user_id = Auth::id();
+        if(Setting::where('id','=',1)->exists()){
+            $setting = Setting::find(1);
+            $start = $setting->timesheet_start;
+            $end = $setting->timesheet_end;
+        }
+        else {
+            $start = '17:00:00';
+            $end = '19:00:00';
+        }
+
+        $start = date('H:i:s', strtotime($start));
+        $end = date('H:i:s', strtotime($end));
 
         // Get timesheet this month
         $timesheet_this_month = DB::table('timesheets')
@@ -43,9 +56,10 @@ class ReportController extends Controller
             "SELECT * FROM timesheets
              WHERE release_date = DATE(created_at)
              AND release_date = DATE(updated_at) 
-             AND DATE_FORMAT(created_at,'%H:%i:%s') <='18:00:00' 
-             AND DATE_FORMAT(updated_at,'%H:%i:%s') <= '19:00:00'
+             AND DATE_FORMAT(created_at,'%H:%i:%s') >="."'".$start."'"." 
+             AND DATE_FORMAT(updated_at,'%H:%i:%s') <="."'".$end."'"." 
              AND created_by = ".$user_id);
+        
 
         $params = [
             'title'          => 'Báo cáo',

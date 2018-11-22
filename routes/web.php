@@ -33,6 +33,9 @@ Route::prefix('admin')->group(function() {
     Route::post('/usermanagement/edit', 'Admin\UserManagement@edit');
     Route::post('/usermanagement/destroy', 'Admin\UserManagement@destroy');
 
+    Route::any('/setting', 'Admin\SettingController@index');
+    Route::post('/setting/timeupdate', 'Admin\SettingController@timeupdate');
+
 });
 
 

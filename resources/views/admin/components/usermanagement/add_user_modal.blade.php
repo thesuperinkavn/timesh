@@ -4,6 +4,7 @@
 </div>
 
 <form action="#" class="form-horizontal">
+    {{ csrf_field() }}
     <div class="modal-body">
         <div class="form-group">
             <label class="control-label col-sm-12 col-md-3">Tên nhân viên</label>

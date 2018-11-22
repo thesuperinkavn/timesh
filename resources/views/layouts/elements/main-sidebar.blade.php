@@ -68,8 +68,8 @@
                     <li>
                         <a href="#"><i class="icon-cog3"></i> <span>Hệ thống</span></a>
                         <ul>
-                            <li><a href="colors_primary.html">Email</a></li>
-                            <li><a href="colors_danger.html">Cấu hình thời gian</a></li>
+                            <li><a href="{{ url('admin/setting') }}">Email</a></li>
+                            <li><a href="{{ url('admin/setting') }}">Cấu hình thời gian</a></li>
                         </ul>
                     </li>
                     @endif
