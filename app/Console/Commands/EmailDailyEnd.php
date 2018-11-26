@@ -3,6 +3,10 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use App\Model\Timesheet;
+use App\User;
+use DB;
+use Mail;
 
 class EmailDailyEnd extends Command
 {
