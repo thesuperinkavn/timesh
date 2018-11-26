@@ -4,6 +4,7 @@ namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use App\Services\Emailservices;
 
 class Kernel extends ConsoleKernel
 {
@@ -25,8 +26,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('daily:emailstart')->dailyAt('17:00');
-        $schedule->command('daily:emailend')->dailyAt('19:00');
+        $emailsevices = new Emailservices;
+        $schedule->command('daily:emailstart')->dailyAt($emailsevices->get_starttime());
+        $schedule->command('daily:emailend')->dailyAt($emailsevices->get_endtime());
     }
 
     /**

@@ -11,4 +11,5 @@ class Setting extends Model
         'timesheet_start',
         'timesheet_end'
     ];
+
 }
