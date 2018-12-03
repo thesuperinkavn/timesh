@@ -1,3 +1,6 @@
+<?php 
+use Carbon\Carbon;
+?>
 <!-- Task manager table -->
 <div class="panel panel-white">
     <div class="panel-heading">
@@ -16,6 +19,32 @@
                 Thêm mới
             </button>
         </a>
+        <hr/>
+        <div class="row">
+            <form action="{{ route('timesheet.filter') }}" class="form-horizontal" method="GET">
+                {{ csrf_field() }}
+                <div class="col-md-5">
+                    <div class="form-group">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="icon-calendar22"></i></span>
+                            <input type="text" class="form-control daterange-weeknumbers" name="dateranger" value="{{ date('m-d-Y', strtotime(Carbon::now())) }} - {{date('m-d-Y', strtotime('+1 week'))}}" required> 
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-danger btn-rounded"><i class="icon-filter3 position-left"></i> Lọc</button>
+                </div>
+
+                <div class="col-md-2">
+                    <a href="{{ route('timesheet.all') }}">
+                        <button type="button" class="btn btn-primary">Xem tất cả</button>
+                    </a>
+                </div>
+            </form>
+        </div>
+        <div class="row">
+            <p>Tìm thấy : {{ count($timesheets) }} Kết quả</p>
+        </div>
     </div>
 
     <table class="table tasks-list table-lg">
@@ -128,6 +157,7 @@ $(document).ready(function(){
             SwalDelete(taskID);
             e.preventDefault();
         });
+
     });
     function SwalDelete(taskID){
             

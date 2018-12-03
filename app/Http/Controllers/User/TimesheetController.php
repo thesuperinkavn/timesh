@@ -344,5 +344,31 @@ class TimesheetController extends Controller
         });
     }
 
+    public function filter(Request $request)
+    {
+        $dataRanger = $request->input('dateranger');
+        
+        $arr = explode('-',$dataRanger);
+        $start = trim($arr[0]);
+        $end = trim($arr[1]);  
+        $start = date('Y-m-d',strtotime($start));
+        $end = date('Y-m-d',strtotime($end));
+        $user_id = Auth::id();
+        $timesheets = Timesheet::where('created_by',$user_id)
+            ->where('release_date','>=',$start)
+            ->where('release_date','<=',$end)
+            ->get();
+            // ->toSql();
+
+        $params = [
+            'title'          => 'Quản lý timesheet',
+            'js'             => 'user.components.timesheet.js',
+            'css'            => 'user.components.timesheet.css',
+            'timesheets'     => $timesheets
+        ];
+        return view('user.pages.timesheet')->with($params);
+
+    }
+
     
 }
