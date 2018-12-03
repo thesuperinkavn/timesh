@@ -94,7 +94,8 @@ class UserManagement extends Controller
             'description' => $description,
             'leader_id' => $leader,
             'role' => $role,
-            'approve' => $approve
+            'approve' => $approve,
+            'avatar'  => 'noavatar.png'
         ]);
 
         return response()->json($errors);

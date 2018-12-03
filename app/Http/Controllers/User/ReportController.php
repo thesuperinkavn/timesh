@@ -36,6 +36,8 @@ class ReportController extends Controller
             $end = '19:00:00';
         }
 
+        $now = Carbon::now();
+
         $start = date('H:i:s', strtotime($start));
         $end = date('H:i:s', strtotime($end));
 
@@ -51,15 +53,15 @@ class ReportController extends Controller
         // total day do not have timesheet this month
         $total_day_not_timesheet = $total_day_this_month - count($timesheet_this_month);
 
+
         // Get timesheet late this month
         $timesheet_on_time_this_month = DB::select(
             "SELECT * FROM timesheets
              WHERE release_date = DATE(created_at)
              AND release_date = DATE(updated_at) 
-             AND DATE_FORMAT(created_at,'%H:%i:%s') >="."'".$start."'"." 
+             AND MONTH(release_date) = ".$now->month."
              AND DATE_FORMAT(updated_at,'%H:%i:%s') <="."'".$end."'"." 
              AND created_by = ".$user_id);
-        
 
         $params = [
             'title'          => 'Báo cáo',

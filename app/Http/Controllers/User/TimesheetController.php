@@ -251,7 +251,7 @@ class TimesheetController extends Controller
         }
         else {
             $timesheets = DB::select(
-                "SELECT timesheets.*, users.id as user_id, users.name as user_name
+                "SELECT timesheets.*, users.id as user_id, users.name as user_name, users.avatar as user_avatar
                 FROM timesheets
                 JOIN (SELECT * FROM users WHERE leader_id = '.$user_id.') AS users
                 ON timesheets.created_by = users.id

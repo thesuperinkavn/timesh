@@ -21,6 +21,11 @@
             @if (Auth::guard('admin')->check() || Auth::guard()->check())
             <li class="dropdown dropdown-user">
                 <a class="dropdown-toggle" data-toggle="dropdown">
+                    @if (Auth::user()->avatar==NULL)
+                        <img src="{{ asset('upload/avatar/noavatar.png') }}"/>
+                    @else
+                        <img src="{{ asset('upload/avatar/'.Auth::user()->avatar) }}"/>
+                    @endif
                     <span>
                         @if (Auth::guard('admin')->check())
                             Admin
@@ -32,6 +37,8 @@
                 </a>
 
                 <ul class="dropdown-menu dropdown-menu-right">
+                    <li><a href="{{ route('profile') }}"><i class="icon-user-plus"></i> Thông tin cá nhân</a></li>
+                    <li class="divider"></li>
                     <li>
                         <a class="" href="{{ route('logout') }}"
                         onclick="event.preventDefault();

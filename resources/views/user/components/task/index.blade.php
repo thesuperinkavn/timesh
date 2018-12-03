@@ -55,7 +55,13 @@
                     {!! task_status($task->status) !!}
                 </td>
                 <td>
-                    <a href="#"><img src="{{ asset('theme/assets/images/demo/users/face12.jpg') }}" class="img-circle img-xs" title="{{ $task->assignee->name }}"></a>
+                    <a href="#">
+                        @if ($task->assignee->name == 'Không chọn')
+                            <img src="{{ asset('upload/avatar/noavatar.png') }}" class="img-circle img-xs" title="{{ $task->assignee->name }}"/>
+                        @else
+                            <img src="{{ asset('upload/avatar/'.$task->assignee->avatar) }}" class="img-circle img-xs" title="{{ $task->assignee->name }}">
+                        @endif
+                    </a>
                 </td>
                 <td class="text-center">
                     <ul class="icons-list">

@@ -37,7 +37,7 @@
                     </div>
                     <div class="text-muted">{{ $timesheet->description }}</div>
                 </td>
-                <td>{{ $timesheet->user_name }}</td>
+                <td><img src="{{ asset('upload/avatar/'.$timesheet->user_avatar) }}" class="img-circle img-xs" title="{{ $timesheet->user_name }}"> {{ $timesheet->user_name }}</td>
                 <td>
                    {!! timesheet_status($timesheet->approve) !!}
                 </td>

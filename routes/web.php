@@ -64,3 +64,8 @@ Route::any('/timesheet/review', 'User\TimesheetController@reviewTimeSheet');
 Route::post('timesheet/review/approve', 'User\TimesheetController@approve');
 Route::post('timesheet/review/unapprove', 'User\TimesheetController@unapprove');
 
+Route::get('profile', 'User\ProfileController@index')->name('profile');
+Route::post('profile/update', 'User\ProfileController@update')->name('profile.update');
+
+
+
