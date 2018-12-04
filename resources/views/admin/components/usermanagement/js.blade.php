@@ -1,6 +1,5 @@
 <script type="text/javascript" src="{{ asset('theme/assets/js/plugins/tables/datatables/datatables.min.js') }}"></script>
-<script type="text/javascript" src="{{ asset('theme/assets/js/plugins/forms/select2/select2.min.js') }}"></script>
-
+<script type="text/javascript" src="{{ asset('theme/assets/js/plugins/forms/select2/select2.full.js') }}"></script>
 <script type="text/javascript" src="{{ asset('theme/assets/js/plugins/notifications/sweetalert2.min.js') }}"></script>
 
 

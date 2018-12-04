@@ -30,6 +30,7 @@
                     <th>ID</th>
                     <th>name</th>
                     <th>Ngày tạo</th>
+                    <th>Role</th>
                     <th>Leader</th>
                     <th>Tình trạng</th>
                     <th class="text-center">Actions</th>
@@ -41,6 +42,7 @@
                 <td>{{$user->id}}</td>
                     <td><a href="#">{{$user->name}}</a></td>
                     <td>{{$user->created_at}}</td>
+                    <td>{{ ($user->role==2) ? 'Nhân viên' : 'Leader' }}</td>
                     <td><span class="label label-success">{{ $user->leader->name }}</span></td>
                     <td>{{ ($user->approve==FALSE) ? 'Not approve' : 'approved' }}</td>
                     <td class="text-center">

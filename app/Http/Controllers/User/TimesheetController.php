@@ -314,34 +314,66 @@ class TimesheetController extends Controller
 
     public function sendEmailReminder($id,$type, $release_date)
     {
-
-
         //$id = $request->input('id');
         $user = User::findOrFail($id);
         $leader = $user->leader;
-
-        $to_name = $leader->name;
-        $to_email = $leader->email;
-
-        $title ='';
-
-        switch ($type) {
-            case '1':
-                $title = $user->name.' vừa tạo timesheet mới cho ngày '.$release_date;
-                break;
-            
-            case '2':
-                $title = $user->name.' vừa sửa timesheet ngày '.$release_date;
-                break;
+        if($leader->name != 'Không có quản lý') {
+            $to_name = $leader->name;
+            $to_email = $leader->email;
+    
+            $title ='';
+    
+            switch ($type) {
+                case '1':
+                    $title = $user->name.' vừa tạo timesheet mới cho ngày '.$release_date;
+                    break;
+                
+                case '2':
+                    $title = $user->name.' vừa sửa timesheet ngày '.$release_date;
+                    break;
+            }
+    
+            $data = array('name'=>$leader->name, "body" => "Đây là thông báo tự động");
+    
+            Mail::send('user.components.email.index', $data, function($message) use ($to_name, $to_email, $title, $user) {
+                $message->to($to_email, $to_name)
+                        ->subject($title);
+                $message->from('timesheetdms@gmail.com',$user->name);
+            });
+    
         }
 
-        $data = array('name'=>$leader->name, "body" => "Đây là thông báo tự động");
+        $notilist = $user->notify_accounts;
+        if($notilist != NULL) {
+            $list = explode(',', $notilist);
+            foreach ($list as $key => $value) {
+                $u = User::findOrFail($value);
+                $to_name = $u->name;
+                $to_email = $u->email;
 
-        Mail::send('user.components.email.index', $data, function($message) use ($to_name, $to_email, $title, $user) {
-            $message->to($to_email, $to_name)
-                    ->subject($title);
-            $message->from($user->email,$user->name);
-        });
+                $title ='';
+
+                switch ($type) {
+                    case '1':
+                        $title = $user->name.' vừa tạo timesheet mới cho ngày '.$release_date;
+                        break;
+                    
+                    case '2':
+                        $title = $user->name.' vừa sửa timesheet ngày '.$release_date;
+                        break;
+                }
+
+                $data = array('name'=>$u->name, "body" => "Đây là thông báo tự động");
+
+                Mail::send('user.components.email.index', $data, function($message) use ($to_name, $to_email, $title, $user) {
+                    $message->to($to_email, $to_name)
+                            ->subject($title);
+                    $message->from('timesheetdms@gmail.com',$user->name);
+                });
+            }
+        }
+
+        
     }
 
     public function filter(Request $request)

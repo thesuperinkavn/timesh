@@ -53,6 +53,19 @@
                     </select>
                 </div>
             </div>
+
+            <div class="form-group">
+                <label class="control-label col-sm-12 col-md-3">Danh sách nhận noti</label>
+                <div class="col-sm-12 col-md-9">
+                    <select multiple="multiple" data-placeholder="Chọn nhân viên..." class="select-size-lg" name="notilist[]" id="notilist">
+                    @foreach ($users as $user)
+                        @if ($user->id != $info->id)
+                            <option value="{{ $user->id }}" {{ (in_array($user->id, $list) ? 'selected' :'') }}>{{ $user->name }}</option>
+                        @endif
+                    @endforeach
+                    </select>
+                </div>
+            </div>
     
             <div class="checkbox">
                 <label>
@@ -76,7 +89,7 @@
     
     <script type="text/javascript" src="{{ asset('theme/assets/js/plugins/forms/styling/uniform.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('theme/assets/js/core/libraries/jquery_ui/interactions.min.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('theme/assets/js/plugins/forms/select2/select2.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('theme/assets/js/plugins/forms/select2/select2.full.js') }}"></script>
     
     <script type="text/javascript">
         $(function() {
@@ -91,6 +104,12 @@
                 minimumResultsForSearch: 2,
                 width: 350
             });
+            // Large
+            $('.select-size-lg').select2({
+                containerCssClass: 'select-lg',
+                width: 350
+            });
+
             
         });
     </script>
@@ -107,6 +126,7 @@
                 var leader          = $('#leader').val();
                 var description     = $('#description').val();
                 var role            = $('#role').val();
+                var notilist        = $('#notilist').val();
                 var approve;
     
                 if ($('#approve').is(":checked")) approve = 1;
@@ -115,7 +135,7 @@
                 $.ajax({
                     type : "POST",
                     dataType : "JSON",
-                    url: "<?php echo url('admin/usermanagement/edit'); ?>",
+                    url: "{{ url('admin/usermanagement/edit') }}",
                     data : {
                         id              : id,
                         name            : name,
@@ -124,7 +144,8 @@
                         leader          : leader,
                         description     : description,
                         role            : role,
-                        approve         : approve
+                        approve         : approve,
+                        notilist        : notilist
                     },
                     success : function(result)
                     {

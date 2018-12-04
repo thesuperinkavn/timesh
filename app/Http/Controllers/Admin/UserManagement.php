@@ -50,11 +50,14 @@ class UserManagement extends Controller
                 $id = $request->input('id');
                 $info = User::find($id);
                 $leaders = DB::table('users')->where('role',3)->where('id','<>',$id)->get();
+                $list = ($info->notify_accounts!=null) ? explode(',', $info->notify_accounts) : [];
                 $params = [
                     'title' => 'Sửa thông tin nhân viên',
                     'users' => $users,
                     'info'  => $info,
-                    'leaders' => $leaders
+                    'leaders' => $leaders,
+                    'users'   => $users,
+                    'list'    => $list
                 ];
                 return view('admin.components.usermanagement.edit_user_modal')->with($params);
                 break;         
@@ -116,6 +119,9 @@ class UserManagement extends Controller
         $leader = $request->input('leader');
         $role = $request->input('role');
         $approve = $request->input('approve');
+        $notilist = (!empty($request->input('notilist'))) ? $request->input('notilist') : [];
+
+        $notify_accounts = implode(',', $notilist);
 
         if (empty($name) || empty($email) ){ $errors['err'] = 'Không được để trống';}
 
@@ -136,6 +142,7 @@ class UserManagement extends Controller
         $info->leader_id = $leader;
         $info->role = $role;
         $info->approve = $approve;
+        $info->notify_accounts = $notify_accounts;
 
         $info->save();
 
