@@ -12,7 +12,9 @@ class Timesheet extends Model
         'description',
         'created_by',
         'approve',
-        'release_date'
+        'release_date',
+        'issue',
+        'plan'
     ];
     
     public function creator()

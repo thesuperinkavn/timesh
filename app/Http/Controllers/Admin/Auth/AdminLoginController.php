@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers\Admin\Auth;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -32,4 +32,11 @@ class AdminLoginController extends Controller
     protected function guard(){
         return Auth::guard('admin');
     }
+
+    public function logout(){
+        Auth::guard('admin')->logout();
+        session()->flash('message', 'Some goodbye message');
+        
+        return redirect('/admin/login');
+      }
 }

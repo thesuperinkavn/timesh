@@ -26,7 +26,7 @@
                 <select class="basic-single select select-fixed-single" id="assignee" name="assignee">
                     <option value="">Không chọn</option>
                     <option value="{{ $info_user->id }}">{{ $info_user->name }}</option>
-                    @foreach ($assignees as $assignee)
+                    @foreach ($info_user->assignee as $assignee)
                     <option value="{{ $assignee->id }}">{{ $assignee->name }}</option>            
                     @endforeach
                 </select>
@@ -119,7 +119,7 @@
         $.ajax({
             type : "POST",
             dataType : "JSON",
-            url: "<?php echo url('task/add'); ?>",
+            url: "{{ url('task/store') }}",
             data : {
                 name            : name,
                 description     : description,

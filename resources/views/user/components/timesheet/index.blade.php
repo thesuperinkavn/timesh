@@ -14,7 +14,7 @@ use Carbon\Carbon;
         </div>
     </div>
     <div class="panel-body">
-        <a href="{{ url('timesheet/create') }}">
+        <a href="{{ route('timesheet.create') }}">
             <button type="button" class="btn bg-teal-400 btn-labeled"><b><i class="icon-add"></i></b> 
                 Thêm mới
             </button>
@@ -92,7 +92,7 @@ use Carbon\Carbon;
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-menu9"></i></a>
                             <ul class="dropdown-menu dropdown-menu-right">
-                                <li><a href="{{ url('timesheet/edit?id='.$timesheet->id) }}" id="addtask" data-id="<?=$timesheet->id?>"><i class="icon-pencil7"></i> Sửa nội dung</a></li>
+                                <li><a href="{{ route('timesheet.edit',$timesheet->id) }}" id="addtask" data-id="<?=$timesheet->id?>"><i class="icon-pencil7"></i> Sửa nội dung</a></li>
                                 <li class="divider"></li>
                                 <li><a href="{{ url('timesheet/addtask?id='.$timesheet->id) }}" id="addtask" data-id="<?=$timesheet->id?>"><i class="icon-plus-circle2"></i> Thêm task</a></li>
                             </ul>

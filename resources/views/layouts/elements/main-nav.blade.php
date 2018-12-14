@@ -37,7 +37,7 @@
                 </a>
 
                 <ul class="dropdown-menu dropdown-menu-right">
-                    <li><a href="{{ route('profile') }}"><i class="icon-user-plus"></i> Thông tin cá nhân</a></li>
+                    <li><a href="{{ route('user.profile') }}"><i class="icon-user-plus"></i> Thông tin cá nhân</a></li>
                     <li class="divider"></li>
                     <li>
                         <a class="" href="{{ route('logout') }}"
@@ -46,7 +46,7 @@
                         {{ __('Logout') }}
                         <i class="icon-switch2"></i>
                         </a>
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                        <form id="logout-form" action="{{ route('admin.logout') }}" method="POST" style="display: none;">
                             {{ csrf_field() }}
                         </form>
                     </li>
