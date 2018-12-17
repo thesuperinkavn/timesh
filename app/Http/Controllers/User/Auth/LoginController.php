@@ -44,6 +44,6 @@ class LoginController extends Controller
             'js'            => 'user.components.login.js',
             'class'         => 'login-container'
         ];
-        return view('user.pages.login')->with($params);
+        return view('user.login.index')->with($params);
     }
 }

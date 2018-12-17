@@ -20,6 +20,6 @@ class AdminController extends Controller
             'title'         => 'Dashboard',
             'js'            => 'admin.components.dashboard.js'
         ];
-        return view('admin.pages.dashboard')->with($params);
+        return view('admin.dashboard.index')->with($params);
     }
 }

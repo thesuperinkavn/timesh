@@ -26,11 +26,12 @@ class TaskController extends UserController
 
         $params = [
             'title'          => 'Quản lý task',
-            'js'             => 'user.components.task.js',
-            'css'            => 'user.components.task.css',
-            'tasks'          => $tasks
+            'js'             => 'user.task.particials.js',
+            'css'            => 'user.task.particials.css',
+            'tasks'          => $tasks,
+            'page'           => 'index'
         ];
-        return view('user.pages.task')->with($params);
+        return view('user.task.particials.main')->with($params);
     }
 
     public function action(Request $request)
@@ -47,9 +48,10 @@ class TaskController extends UserController
                     'title'     => 'Thêm mới task',
                     'users'     => $users,
                     'info_user' => $info_user,
-                    'id'        => Auth::user()->id
+                    'id'        => Auth::user()->id,
+                    'page'      => 'add_task_modal'
                 ];
-                return view('user.components.task.add_task_modal')->with($params);
+                return view('user.task.particials.main')->with($params);
                 break;
             case 'edit':
                 $id_task = $request->input('id');
@@ -59,9 +61,10 @@ class TaskController extends UserController
                     'users'     => $users,
                     'info_user' => $info_user,
                     'info_task' => $info_task,
-                    'id_task'   => $id_task
+                    'id_task'   => $id_task,
+                    'page'      => 'edit_task_modal'
                 ];
-                return view('user.components.task.edit_task_modal')->with($params);
+                return view('user.task.particials.main')->with($params);
                 break;         
             default:
                 # code...

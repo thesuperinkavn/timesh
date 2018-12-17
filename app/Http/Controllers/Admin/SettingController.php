@@ -24,7 +24,7 @@ class SettingController extends AdminBaseController
             'js'            => 'admin.components.setting.js',
             'config'        => $config
         ];
-        return view('admin.pages.setting')->with($params);
+        return view('admin.setting.particials.main')->with($params);
     }
 
     public function timeupdate(Request $request)

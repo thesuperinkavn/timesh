@@ -1,9 +1,13 @@
 
 // Fonts
-@import url("https://fonts.googleapis.com/css?family=Raleway:300,400,600");
+@import url("https://fonts.googleapis.com/css?family=Roboto+Slab:300,400,700;subset=vietnamese");
 
-// Variables
-@import "variables";
+@import "css/icons/icomoon/styles.css";
 
-// Bootstrap
-@import "~bootstrap-sass/assets/stylesheets/bootstrap";
+@import "css/bootstrap.css";
+
+@import "css/core.css";
+
+@import "css/components.css";
+
+@import "css/colors.css";
