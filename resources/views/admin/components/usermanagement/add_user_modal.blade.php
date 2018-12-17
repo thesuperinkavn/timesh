@@ -114,7 +114,7 @@
             $.ajax({
                 type : "POST",
                 dataType : "JSON",
-                url: "<?php echo url('admin/usermanagement/add'); ?>",
+                url: "{{ url('admin/usermanagement/store') }}",
                 data : {
                     name            : name,
                     email           : email,

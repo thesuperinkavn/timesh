@@ -3,23 +3,23 @@
 namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use App\User;
-use DB;
-use App\Model\Admin;
+use App\Http\Controllers\Admin\AdminBaseController;
 use Illuminate\Support\Facades\Hash;
+use App\Services\Interfaces\UserInterface;
+use Auth;
 
-class UserManagement extends Controller
+class UserManagement extends AdminBaseController
 {
     //
-    public function __construct()
+    public function __construct(UserInterface $user)
     {
         $this->middleware('auth:admin');
+        $this->user = $user;
     }
 
     public function index()
     {
-        $users = User::all();
+        $users = $this->user->getAll();
 
         $params = [
             'title'         => 'Quản lý nhân viên',
@@ -33,12 +33,12 @@ class UserManagement extends Controller
     function action(Request $request)
     {
         $action = $request->input('action');
-        $users = User::all();
+        $users = $this->user->getAll();
         
 
         switch ($action) {
             case 'add':
-                $leaders = DB::table('users')->where('role',3)->get();
+                $leaders = $this->user->getAllLeaders();
                 $params = [
                     'title' => 'Thêm mới nhân viên',
                     'users' => $users,
@@ -48,8 +48,8 @@ class UserManagement extends Controller
                 break;
             case 'edit':
                 $id = $request->input('id');
-                $info = User::find($id);
-                $leaders = DB::table('users')->where('role',3)->where('id','<>',$id)->get();
+                $info = $this->user->find($id);
+                $leaders = $this->user->getAllOthersLeaders($id);
                 $list = ($info->notify_accounts!=null) ? explode(',', $info->notify_accounts) : [];
                 $params = [
                     'title' => 'Sửa thông tin nhân viên',
@@ -68,84 +68,74 @@ class UserManagement extends Controller
         //return response()->json(['success'=>'Got Simple Ajax Request.']);;
     }
 
-    function add(Request $request)
+    function store(Request $request)
     {
         //print_r($request->all());
         $errors  = array('error' => 0);
-        $name = $request->input('name');
-        $email = $request->input('email');
-        $password = $request->input('password');
-        $description = $request->input('description');
-        $leader = $request->input('leader');
-        $role = $request->input('role');
-        $approve = $request->input('approve');
 
-        if (empty($name) || empty($email) || empty($password) ){ $errors['err'] = 'Không được để trống';}
+        $attributes = array(
+            'name'          => $request->input('name'),
+            'email'         => $request->input('email'),
+            'password'      => Hash::make($request->input('password')),
+            'description'   => $request->input('description'),
+            'leader_id'     => $request->input('leader'),
+            'role'          => $request->input('role'),
+            'approve'       => $request->input('approve'),
+            'avatar'        => 'noavatar.png'
+        );
 
-        if (User::where('email', '=', $email)->exists()) {
-            $errors['email'] = 'email đã tồn tại';
-        }
+        if (empty($request->input('name')) || empty($request->input('email')) || empty($request->input('password')) ){ $errors['err'] = 'Không được để trống';}
+
         if (count($errors) > 1){
             $errors['error'] = 1;
             return response()->json($errors);
         }
 
-        $user = User::create([
-            'name' => $name,
-            'email' => $email,
-            'password' => Hash::make($password),
-            'description' => $description,
-            'leader_id' => $leader,
-            'role' => $role,
-            'approve' => $approve,
-            'avatar'  => 'noavatar.png'
-        ]);
-
+        $user = $this->user->store($attributes);
+        if(!$user){
+            $errors['error'] = 1;
+            return response()->json($errors);
+        }
         return response()->json($errors);
         
     }
 
-    function edit(Request $request)
+    function update(Request $request)
     {
         //print_r($request->all());
         $errors  = array('error' => 0);
         $id = $request->input('id');
-        $info = User::find($id);
 
-        $name = $request->input('name');
-        $email = $request->input('email');
+        $info = $this->user->find($id);
+
         $password = $request->input('password');
-        $description = $request->input('description');
-        $leader = $request->input('leader');
-        $role = $request->input('role');
-        $approve = $request->input('approve');
+        $password = ($password == '') ? $info->password : Hash::make($password);
         $notilist = (!empty($request->input('notilist'))) ? $request->input('notilist') : [];
-
         $notify_accounts = implode(',', $notilist);
 
-        if (empty($name) || empty($email) ){ $errors['err'] = 'Không được để trống';}
+        $attributes = array(
+            'name'          => $request->input('name'),
+            'email'         => $request->input('email'),
+            'password'      => $password,
+            'description'   => $request->input('description'),
+            'leader_id'     => $request->input('leader'),
+            'role'          => $request->input('role'),
+            'approve'       => $request->input('approve'),
+            'notify_accounts'      => $notify_accounts
+        );
 
-        if (User::where('email', '=', $email)->exists() && $email!= $info->email) {
-            $errors['email'] = 'email đã tồn tại';
-        }
+        if (empty($request->input('name')) || empty($request->input('email')) ){ $errors['err'] = 'Không được để trống';}
+
         if (count($errors) > 1){
             $errors['error'] = 1;
             return response()->json($errors);
         }
 
-        $password = ($password == '') ? $info->password : Hash::make($password);
-
-        $info->name = $name;
-        $info->email = $email;
-        $info->password = $password;
-        $info->description = $description;
-        $info->leader_id = $leader;
-        $info->role = $role;
-        $info->approve = $approve;
-        $info->notify_accounts = $notify_accounts;
-
-        $info->save();
-
+        if ($this->user->update($id, $attributes) == FALSE)
+        {
+            $errors['error'] = 1;
+            return response()->json($errors);
+        }
         return response()->json($errors);
         
     }
@@ -154,16 +144,11 @@ class UserManagement extends Controller
     {
         $errors  = array('error' => 0);
         $id = $request->input('id');
-        if ($id) {
-            
-            $info = User::find($id);
-            if($info){
-                $info->delete();
-            }
-            else {
-                $errors['errors'] = 1;
-            }
+        if ($this->user->destroy($id) == FALSE)
+        {
+            $errors['error'] = 1;
             return response()->json($errors);
         }
+        return response()->json($errors);
     }
 }

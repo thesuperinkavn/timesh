@@ -3,20 +3,21 @@
 namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use App\Model\Setting;
+use App\Http\Controllers\Admin\AdminBaseController;
+use App\Services\Interfaces\SettingInterface;
 
-class SettingController extends Controller
+class SettingController extends AdminBaseController
 {
     //
-    public function __construct()
+    public function __construct(SettingInterface $setting)
     {
         $this->middleware('auth:admin');
+        $this->setting = $setting;
     }
 
     public function index()
     {
-        $config = Setting::find(1);
+        $config = $this->setting->find(1);
         
         $params = [
             'title'         => 'Setting',
@@ -36,24 +37,23 @@ class SettingController extends Controller
 
         $start = strtotime($request->get('start'));
         $start = date('H:i:s',$start);
-        //print_r($start);
 
         $end = strtotime($request->get('end'));
         $end = date('H:i:s',$end);
+        $attributes = array(
+            'timesheet_start' => $start,
+            'timesheet_end'   => $end
+        );
 
-        if(Setting::where('id','=',1)->exists()){
-            $setting = Setting::find(1);
-            $setting->timesheet_start = $start;
-            $setting->timesheet_end = $end;
+        $config = $this->setting->find(1);
+
+        if(empty($config)){
+            $this->setting->store($attributes);
         }
         else {
-            $setting = new Setting([
-                'timesheet_start' => $start,
-                'timesheet_end'   => $end
-            ]);
+            $this->setting->update($config->id,$attributes);
         }
-        
-        $setting->save();
+
         return redirect('/admin/setting')->with('success', 'Cập nhật thành công');
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\User\UserController;
 use App\Services\Interfaces\TimesheetInterface;
+use App\Services\Interfaces\EmailInterface;
 use App\Http\Requests\StoreTimesheet;
 use App\Http\Requests\UpdateTimesheet;
 use Auth;
@@ -17,9 +18,10 @@ class TimesheetController extends UserController
     //
     protected $timesheet;
 
-    public function __construct(TimesheetInterface $timesheet)
+    public function __construct(TimesheetInterface $timesheet, EmailInterface $email)
     {
         $this->timesheet = $timesheet;
+        $this->email = $email;
         $this->middleware('auth');
     }
 
@@ -65,11 +67,12 @@ class TimesheetController extends UserController
 
     public function store(StoreTimesheet $request)
     {
+        $newformat = date('Y-m-d',strtotime($request->get('release_date')));
 
         $attributes = array(
             'name'          => $request->input('name'),
             'description'   => $request->input('description'),
-            'release_date'  => date('Y-m-d',strtotime($request->get('release_date'))),
+            'release_date'  => $newformat,
             'issue'         => $request->input('issue'),
             'plan'          => $request->input('plan'),
             'created_by'    => Auth::id()
@@ -77,7 +80,14 @@ class TimesheetController extends UserController
         $timesheet = $this->timesheet->store($attributes);
 
         //$this->sendEmailReminder(Auth::id(),'1',$newformat);
-        return redirect('/timesheet')->with('success', 'Thêm mới thành công');
+        if($this->email->sendEmailReminderToLeader(Auth::id(),'1',$newformat) === 0)
+        {
+            return redirect('/timesheet')->with('success', 'Thêm mới thành công');
+        }
+        else {
+            return redirect('/timesheet')->with('error', 'Có lỗi xảy ra');
+        }
+        
     }
 
     public function edit($id)
@@ -121,7 +131,16 @@ class TimesheetController extends UserController
         );
         $this->timesheet->update($id, $attributes);
         //$this->sendEmailReminder(Auth::id(),'2',$timesheet->release_date);
-        return redirect('/timesheet')->with('success', 'Sửa thông tin thành công');
+        echo ($this->email->sendEmailReminderToLeader(Auth::id(),'2',$newformat));
+        if($this->email->sendEmailReminderToLeader(Auth::id(),'2',$newformat) === 0)
+        {
+           
+            return redirect('/timesheet')->with('success', 'Cập nhật thành công');
+        }
+        else {
+            return redirect('/timesheet')->with('error', 'Có lỗi xảy ra');
+        }
+        
     }
 
     public function addtask($id)
@@ -246,6 +265,4 @@ class TimesheetController extends UserController
         return view('user.pages.timesheet')->with($params);
 
     }
-
-    
 }

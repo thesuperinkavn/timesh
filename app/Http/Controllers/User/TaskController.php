@@ -15,7 +15,7 @@ class TaskController extends UserController
     protected $task, $users;
     public function __construct(TaskInterface $task, UserInterface $user)
     {
-        //$this->middleware('auth');
+        $this->middleware('auth');
         $this->task = $task;
         $this->user = $user;
     }

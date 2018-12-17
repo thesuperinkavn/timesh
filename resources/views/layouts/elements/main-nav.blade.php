@@ -21,7 +21,7 @@
             @if (Auth::guard('admin')->check() || Auth::guard()->check())
             <li class="dropdown dropdown-user">
                 <a class="dropdown-toggle" data-toggle="dropdown">
-                    @if (Auth::user()->avatar==NULL)
+                    @if (!isset(Auth::user()->avatar))
                         <img src="{{ asset('upload/avatar/noavatar.png') }}"/>
                     @else
                         <img src="{{ asset('upload/avatar/'.Auth::user()->avatar) }}"/>

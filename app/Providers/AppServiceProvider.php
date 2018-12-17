@@ -19,6 +19,9 @@ use App\Services\SettingService;
 use App\Services\Interfaces\ReportInterface;
 use App\Services\ReportService;
 
+use App\Services\Interfaces\EmailInterface;
+use App\Services\EmailService;
+
 use Blade;
 
 class AppServiceProvider extends ServiceProvider
@@ -66,5 +69,6 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(UserInterface::class, UserService::class);
         $this->app->bind(SettingInterface::class, SettingService::class);
         $this->app->bind(ReportInterface::class, ReportService::class);
+        $this->app->bind(EmailInterface::class, EmailService::class);
     }
 }

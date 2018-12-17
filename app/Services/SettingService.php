@@ -6,6 +6,25 @@ use App\Model\Setting;
 
 class SettingService implements SettingInterface
 {
+    public function find($id)
+    {
+        return Setting::find($id);
+    }
+
+    public function store($attributes = array())
+    {
+        return Setting::create($attributes);
+    }
+
+    public function update($id, $attributes = array())
+    {
+        $info = $this->find($id);
+        if ($info) {
+            $info->update($attributes);
+            return $info;
+        }
+        return false;
+    }
     
     public function getStartTime()
     {

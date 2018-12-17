@@ -135,7 +135,7 @@
                 $.ajax({
                     type : "POST",
                     dataType : "JSON",
-                    url: "{{ url('admin/usermanagement/edit') }}",
+                    url: "{{ url('admin/usermanagement/update') }}",
                     data : {
                         id              : id,
                         name            : name,

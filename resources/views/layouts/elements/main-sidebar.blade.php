@@ -8,12 +8,13 @@
                 <div class="media">
                     <a href="#" class="media-left"></a>
                     <div class="media-body">
-                        <span class="media-heading text-semibold">{{Auth::user()->email}}</span>
+                        @if (Auth::guard()->check())
+                        <span class="media-heading text-semibold">{{ Auth::user()->email }}</span>
                         
                         <div class="text-size-mini text-muted">
-                            <i class="icon-pin text-size-small"></i> &nbsp;{{Auth::user()->name}}
+                            <i class="icon-pin text-size-small"></i> &nbsp;{{ Auth::user()->name }}
                         </div>
-          
+                        @endif
                     </div>
 
                     <div class="media-right media-middle">
@@ -36,7 +37,7 @@
                     <!-- Main -->
                     <li class="navigation-header"><span>Main</span> <i class="icon-menu" title="Main pages"></i></li>
                     @if (Auth::guard('admin')->check())
-                    <li class="active"><a href="index.html"><i class="icon-home4"></i> <span>Tổng quan</span></a></li>
+                    <li class="active"><a href="{{ url('/admin/dashboard') }}"><i class="icon-home4"></i> <span>Tổng quan</span></a></li>
                     <li>
                         <a href="#"><i class="icon-user"></i> <span>Nhân viên</span></a>
                         <ul>
