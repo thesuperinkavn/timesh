@@ -6,6 +6,6 @@ interface TimesheetInterface
     public function getAll();
     public function find($id);
     public function store($attributes = array());
-    // public function update($attributes = array());
-    // public function delete($id);
+    public function update($id,$attributes = array());
+    public function destroy($id);
 }

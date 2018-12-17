@@ -27,7 +27,7 @@
             </ul>
         </div><br />
         @endif
-        <form class="form-horizontal" role="form" method="POST" enctype="multipart/form-data" action="{{ url('timesheet/update/?id='.$info_timesheet->id) }}">
+        <form class="form-horizontal" role="form" method="POST" enctype="multipart/form-data" action="{{ route('timesheet.update',$info_timesheet->id) }}">
             <div class="form-group">
                 {{ csrf_field() }}
                 <label class="control-label col-lg-2 col-xs-12">Tiêu đề</label>
@@ -67,14 +67,6 @@
                 </div>
             </div>
 
-            {{--  <div class="form-group">
-                <label class="control-label col-lg-2 col-xs-12">Task dành cho bạn</label>
-                <div class="col-lg-6 col-xs-12">
-                    <select class="basic-single select select-fixed-single" id="task" name="task">
-                        <option value="0">N/A</option>
-                    </select>
-                </div>  --}}
-            </div>
 
             <div class="text-right">
                 <button type="reset" class="btn btn-danger">Cancel</button>

@@ -46,9 +46,15 @@
                         {{ __('Logout') }}
                         <i class="icon-switch2"></i>
                         </a>
+                        @if (Auth::guard('admin')->check())
                         <form id="logout-form" action="{{ route('admin.logout') }}" method="POST" style="display: none;">
                             {{ csrf_field() }}
                         </form>
+                        @else 
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                            {{ csrf_field() }}
+                        </form>
+                        @endif
                     </li>
                 </ul>
             </li>

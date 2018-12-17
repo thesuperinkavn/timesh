@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\User;
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\User\Controller;
+use App\Http\Controllers\User\UserController;
 use Auth;
 use App\User;
 use Intervention\Image\Facades\Image;
 
-class ProfileController extends Controller
+class ProfileController extends UserController
 {
     //
     public function index()

@@ -186,7 +186,7 @@
                         }
                     });
                     $.ajax({
-                        url: "{{ url('/timesheet/unapprove') }}",
+                        url: "{{ url('/timesheet/review/unapprove') }}",
                         type : "POST",
                         dataType : "JSON",
                         data : data

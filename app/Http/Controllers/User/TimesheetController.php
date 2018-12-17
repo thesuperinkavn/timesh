@@ -3,13 +3,16 @@
 namespace App\Http\Controllers\User;
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\User\Controller;
+use App\Http\Controllers\User\UserController;
 use App\Services\Interfaces\TimesheetInterface;
 use App\Http\Requests\StoreTimesheet;
+use App\Http\Requests\UpdateTimesheet;
 use Auth;
+use App\Rules\Dateunique;
+use App\Rules\Righttime;
+use Carbon\Carbon;
 
-
-class TimesheetController extends Controller
+class TimesheetController extends UserController
 {
     //
     protected $timesheet;
@@ -17,6 +20,7 @@ class TimesheetController extends Controller
     public function __construct(TimesheetInterface $timesheet)
     {
         $this->timesheet = $timesheet;
+        $this->middleware('auth');
     }
 
 
@@ -34,21 +38,20 @@ class TimesheetController extends Controller
     }
 
    
-    // public function show($id)
-    // {
-    //     //
-    //     $timesheet_id = $request->input('id');
-    //     $info_timesheet = Timesheet::find($timesheet_id);
+    public function show(Request $request)
+    {
+        //
+        $info_timesheet = $this->timesheet->find($request->input('id'));
 
-    //     $list_tasks_added = Timesheet::find($timesheet_id)->tasks;
+        $list_tasks_added = $info_timesheet->tasks;
 
-    //     $params = [
-    //         'title'            => 'Hiển thị thông tin timesheet',
-    //         'info_timesheet'   => $info_timesheet,
-    //         'list_tasks_added' => $list_tasks_added
-    //     ];
-    //     return view('user.components.timesheet.show_timesheet_modal')->with($params);
-    // }
+        $params = [
+            'title'            => 'Hiển thị thông tin timesheet',
+            'info_timesheet'   => $info_timesheet,
+            'list_tasks_added' => $list_tasks_added
+        ];
+        return view('user.components.timesheet.show_timesheet_modal')->with($params);
+    }
 
     public function create()
     {
@@ -90,304 +93,159 @@ class TimesheetController extends Controller
         return view('user.pages.timesheet-edit')->with($params);
     }
 
-    // public function update(Request $request)
-    // {
-    //     $timesheet_id = $request->input('id');
-    //     $timesheet = Timesheet::find($timesheet_id);
+    public function update($id, Request $request)
+    {
+        $time = strtotime($request->get('release_date'));
+        $newformat = date('Y-m-d',$time);
+        $timesheet = $this->timesheet->find($id);
 
-    //     $time = strtotime($request->get('release_date'));
-    //     $newformat = date('Y-m-d',$time);
-
-    //     if(strtotime($newformat) != strtotime($timesheet->release_date)){
-    //         $request->validate([
-    //             'release_date' => ['required', new Dateunique],
-    //         ]);
-    //     }
+        if(strtotime($newformat) != strtotime($timesheet->release_date)){
+            $request->validate([
+                'release_date' => ['required', new Dateunique, new Righttime],
+            ]);
+        }
         
-    //     $request->validate([
-    //         'release_date' => ['required']
-    //     ]);
+        $request->validate([
+            'release_date' => ['required'],
+            'name'         => 'required'
+        ]);
 
-    //     $timesheet->name = $request->get('name');
-    //     $timesheet->description = $request->get('description');
-    //     $timesheet->release_date = $newformat;
-    //     $timesheet->issue = $request->get('issue');
-    //     $timesheet->plan = $request->get('plan');
-    //     $timesheet->approve = '0';
-    //     $timesheet->updated_at = Carbon::now();
+        $attributes = array(
+            'name'          => $request->input('name'),
+            'description'   => $request->input('description'),
+            'release_date'  => $newformat,
+            'issue'         => $request->input('issue'),
+            'plan'          => $request->input('plan'),
+            'approve'       => 0,
+            'updated_at'    => Carbon::now()
+        );
+        $this->timesheet->update($id, $attributes);
+        //$this->sendEmailReminder(Auth::id(),'2',$timesheet->release_date);
+        return redirect('/timesheet')->with('success', 'Sửa thông tin thành công');
+    }
 
-    //     $timesheet->save();
-    //     $this->sendEmailReminder(Auth::id(),'2',$timesheet->release_date);
-    //     return redirect('/timesheet')->with('success', 'Sửa thông tin thành công');
-    // }
+    public function addtask($id)
+    {
 
-    // public function addtask(Request $request)
-    // {
-    //     if($request->input('id')){
-    //         $timesheet_id = $request->input('id');
-    //         $info_timesheet = Timesheet::find($timesheet_id);
-           
-    //         $list_tasks_added = Timesheet::find($timesheet_id)->tasks;
+        $timesheet = $this->timesheet->find($id); 
+        $list_tasks_added = $timesheet->tasks;
 
-    //         $params = [
-    //             'title'            => 'Thêm task cho timesheet',
-    //             'js'               => 'user.components.timesheet.js',
-    //             'css'              => 'user.components.timesheet.css',
-    //             'info_timesheet'   => $info_timesheet,
-    //             'list_tasks_added' => $list_tasks_added
-    //         ];
-    //         return view('user.pages.addtask')->with($params);
-    //     }
-
-    // }
-
-    // public function addtask_action(Request $request)
-    // {
-    //     $action = $request->input('action');
-    //     $timesheet_id = $request->input('id');
-    //     $user_id = Auth::id();
-    //     $list_tasks_assign = DB::table('tasks')->where('assign_to',$user_id)->get();
-
-    //     switch ($action) {
-    //         case 'add':
-    //             $params = [
-    //                 'title'     => 'Thêm task vào timesheet',
-    //                 'list_tasks_assign' => $list_tasks_assign,
-    //                 'timesheet_id'     => $timesheet_id
-    //             ];
-    //             return view('user.components.timesheet.add_task_to_timesheet_modal')->with($params);
-    //             break;
-    //         case 'edit':
-    //             $id_task = $request->input('id');
-    //             $info_task = Task::find($id_task);
-    //             $params = [
-    //                 'title'     => 'Sửa thông tin task',
-    //                 'users'     => $users,
-    //                 'assignees' => $assignees,
-    //                 'info_user' => $info_user,
-    //                 'info_task' => $info_task,
-    //                 'id_task'   => $id_task
-    //             ];
-    //             return view('user.components.task.edit_task_modal')->with($params);
-    //             break;         
-    //         default:
-    //             # code...
-    //             break;
-    //     }
-
-    // }
-
-    // public function addTaskToTimeSheet(Request $request)
-    // {
-    //     $errors  = array('error' => 0);
-
-    //     $task_id = $request->input('task');
-    //     $content = $request->input('content');
-    //     $duration = $request->input('duration');
-    //     $timesheet_id = $request->input('timesheet_id');
-
-    //     $info= DB::table('task_timesheet')
-    //         ->where('timesheet_id',$timesheet_id)
-    //         ->where('task_id',$task_id)
-    //         ->get();
-
-    //     if(count($info)){
-    //         $errors['error'] = 1;
-    //         $errors['err'] = 'Task này đã được tạo trong timesheet';
-    //         return response()->json($errors);
-    //     }
-    //     else {
-    //         $timesheet = Timesheet::find($timesheet_id);
-    //         $timesheet->tasks()->attach($task_id, ['content'=> $content, 'duration'=> $duration]); //this executes the insert-query
-            
-    //         //$timesheet = Timesheet::find($timesheet_id);
-    //         $timesheet->approve = '0';
-    //         $timesheet->updated_at = Carbon::now();
-    //         $timesheet->save();
-    
-    //         return response()->json($errors);
-    //     }
+        $params = [
+            'title'            => 'Thêm task cho timesheet :'.$id,
+            'js'               => 'user.components.timesheet.js',
+            'css'              => 'user.components.timesheet.css',
+            'info_timesheet'   => $timesheet,
+            'list_tasks_added' => $list_tasks_added
+        ];
+        return view('user.pages.addtask')->with($params);
         
-    // }
+    }
 
-    // public function removeTaskFromTimeSheet(Request $request)
-    // {
-    //     $errors  = array('error' => 0);
-    //     $id = $request->input('id');
-    //     $timesheet_id = $request->input('timesheet');
-    //     $task_id = $request->input('task_id');
+    public function addtask_action(Request $request)
+    {
+        $action = $request->input('action');
+        $timesheet_id = $request->input('id');
+        $list_tasks_assign = $this->timesheet->getAllTask();
 
-    //     $timesheet = Timesheet::find($timesheet_id);
-    //     $timesheet->tasks()->detach($task_id); //this executes the insert-query
+        switch ($action) {
+            case 'add':
+                $params = [
+                    'title'     => 'Thêm task vào timesheet',
+                    'list_tasks_assign' => $list_tasks_assign,
+                    'timesheet_id'     => $timesheet_id
+                ];
+                return view('user.components.timesheet.add_task_to_timesheet_modal')->with($params);
+                break;
+            case 'edit':
+                $id_task = $request->input('id');
+                $info_task = Task::find($id_task);
+                $params = [
+                    'title'     => 'Sửa thông tin task',
+                    'users'     => $users,
+                    'assignees' => $assignees,
+                    'info_user' => $info_user,
+                    'info_task' => $info_task,
+                    'id_task'   => $id_task
+                ];
+                return view('user.components.task.edit_task_modal')->with($params);
+                break;         
+            default:
+                # code...
+                break;
+        }
 
-    //     //$timesheet = Timesheet::find($timesheet_id);
-    //     $timesheet->approve = '0';
-    //     $timesheet->updated_at = Carbon::now();
-    //     $timesheet->save();
+    }
 
-    //     return response()->json($errors);
+    public function addTaskToTimeSheet(Request $request)
+    {
+        $errors  = array('error' => 0);
 
-    // }
+        $task_id = $request->input('task');
+        $timesheet_id = $request->input('timesheet_id');
 
-    // public function reviewTimeSheet(Request $request)
-    // {
-    //     $user_id = Auth::id();
-    //     $role = Auth::user()->role;
-    //     if($role < 3){
-    //         return redirect('/timesheet')->with('success', 'Bạn không có quyền vào trang này');
-    //     }
-    //     else {
-    //         $timesheets = DB::select(
-    //             "SELECT timesheets.*, users.id as user_id, users.name as user_name, users.avatar as user_avatar
-    //             FROM timesheets
-    //             JOIN (SELECT * FROM users WHERE leader_id = '.$user_id.') AS users
-    //             ON timesheets.created_by = users.id
-    //             WHERE created_by <> ".$user_id);
-    //         //print_r($timesheets);
-    //         $params = [
-    //             'title'            => 'Duyệt timesheet',
-    //             'js'               => 'user.components.timesheet.js',
-    //             'css'              => 'user.components.timesheet.css',
-    //             'timesheets'       => $timesheets
-    //         ];
-    //         return view('user.pages.timesheet-review')->with($params);
-    //     }
-    // }
+        $attributes = array(
+            'content'          => $request->input('content'),
+            'duration'         => $request->input('duration')
+        );
 
-    // public function approve(Request $request)
-    // {
-    //     $errors  = array('error' => 0);
-    //     if ($request->input('id')) {
-            
-    //         $id = $request->input('id');
-    //         try
-    //         {
-    //             $timesheet = Timesheet::find($id);
-    //             $timesheet->approve = 1;
-    //             $timesheet->save();
-    //         }
-    //         catch (ModelNotFoundException $ex) 
-    //         {
-    //             if ($ex instanceof ModelNotFoundException)
-    //             {
-    //                 $errors['errors'] = 1;
-    //             }
-    //         }
-    //         return response()->json($errors);
-    //     }
-    // }
-    // public function unapprove(Request $request)
-    // {
-    //     $errors  = array('error' => 0);
-    //     if ($request->input('id')) {
-            
-    //         $id = $request->input('id');
-    //         try
-    //         {
-    //             $timesheet = Timesheet::find($id);
-    //             $timesheet->approve = 0;
-    //             $timesheet->save();
-    //         }
-    //         catch (ModelNotFoundException $ex) 
-    //         {
-    //             if ($ex instanceof ModelNotFoundException)
-    //             {
-    //                 $errors['errors'] = 1;
-    //             }
-    //         }
-    //         return response()->json($errors);
-    //     }
-    // }
-
-    // public function sendEmailReminder($id,$type, $release_date)
-    // {
-    //     //$id = $request->input('id');
-    //     $user = User::findOrFail($id);
-    //     $leader = $user->leader;
-    //     if($leader->name != 'Không có quản lý') {
-    //         $to_name = $leader->name;
-    //         $to_email = $leader->email;
-    
-    //         $title ='';
-    
-    //         switch ($type) {
-    //             case '1':
-    //                 $title = $user->name.' vừa tạo timesheet mới cho ngày '.$release_date;
-    //                 break;
-                
-    //             case '2':
-    //                 $title = $user->name.' vừa sửa timesheet ngày '.$release_date;
-    //                 break;
-    //         }
-    
-    //         $data = array('name'=>$leader->name, "body" => "Đây là thông báo tự động");
-    
-    //         Mail::send('user.components.email.index', $data, function($message) use ($to_name, $to_email, $title, $user) {
-    //             $message->to($to_email, $to_name)
-    //                     ->subject($title);
-    //             $message->from('timesheetdms@gmail.com',$user->name);
-    //         });
-    
-    //     }
-
-    //     $notilist = $user->notify_accounts;
-    //     if($notilist != NULL) {
-    //         $list = explode(',', $notilist);
-    //         foreach ($list as $key => $value) {
-    //             $u = User::findOrFail($value);
-    //             $to_name = $u->name;
-    //             $to_email = $u->email;
-
-    //             $title ='';
-
-    //             switch ($type) {
-    //                 case '1':
-    //                     $title = $user->name.' vừa tạo timesheet mới cho ngày '.$release_date;
-    //                     break;
-                    
-    //                 case '2':
-    //                     $title = $user->name.' vừa sửa timesheet ngày '.$release_date;
-    //                     break;
-    //             }
-
-    //             $data = array('name'=>$u->name, "body" => "Đây là thông báo tự động");
-
-    //             Mail::send('user.components.email.index', $data, function($message) use ($to_name, $to_email, $title, $user) {
-    //                 $message->to($to_email, $to_name)
-    //                         ->subject($title);
-    //                 $message->from('timesheetdms@gmail.com',$user->name);
-    //             });
-    //         }
-    //     }
-
+        if($this->timesheet->checkTaskInTimesheet($timesheet_id, $task_id)){
+            $errors['error'] = 1;
+            $errors['err'] = 'Task này đã được tạo trong timesheet';
+            return response()->json($errors);
+        }
+        else {
+            if($this->timesheet->addTaskToTimesheet($timesheet_id, $task_id, $attributes) === 0){
+                $errors['error'] = 1;
+                $errors['err'] = 'Có lỗi xảy ra, vui lòng thử lại';
+                return response()->json($errors);
+            }
+            $attributes = array(
+                'approve'       => 0,
+                'updated_at'    => Carbon::now()
+            );
+            $this->timesheet->update($timesheet_id, $attributes);
+            return response()->json($errors);
+        }
         
-    // }
+    }
 
-    // public function filter(Request $request)
-    // {
-    //     $dataRanger = $request->input('dateranger');
-        
-    //     $arr = explode('-',$dataRanger);
-    //     $start = trim($arr[0]);
-    //     $end = trim($arr[1]);  
-    //     $start = date('Y-m-d',strtotime($start));
-    //     $end = date('Y-m-d',strtotime($end));
-    //     $user_id = Auth::id();
-    //     $timesheets = Timesheet::where('created_by',$user_id)
-    //         ->where('release_date','>=',$start)
-    //         ->where('release_date','<=',$end)
-    //         ->get();
-    //         // ->toSql();
+    public function removeTaskFromTimeSheet(Request $request)
+    {
+        $errors  = array('error' => 0);
 
-    //     $params = [
-    //         'title'          => 'Quản lý timesheet',
-    //         'js'             => 'user.components.timesheet.js',
-    //         'css'            => 'user.components.timesheet.css',
-    //         'timesheets'     => $timesheets
-    //     ];
-    //     return view('user.pages.timesheet')->with($params);
+        $timesheet_id = $request->input('timesheet');
+        $task_id = $request->input('task_id');
+        $timesheet = $this->timesheet->find($timesheet_id); 
 
-    // }
+        if($this->timesheet->removeTaskFromTimeSheet($timesheet_id, $task_id) === 0){
+            $errors['error'] = 1;
+            $errors['err'] = 'Có lỗi xảy ra, vui lòng thử lại';
+            return response()->json($errors);
+        }
+
+        $attributes = array(
+            'approve'       => 0,
+            'updated_at'    => Carbon::now()
+        );
+        $this->timesheet->update($timesheet_id, $attributes);
+        return response()->json($errors);
+
+    }
+
+    public function filter(Request $request)
+    {
+        $dataRange = $request->input('dateranger');
+        $timesheets = $this->timesheet->filterTimesheet($dataRange);
+
+        $params = [
+            'title'          => 'Quản lý timesheet',
+            'js'             => 'user.components.timesheet.js',
+            'css'            => 'user.components.timesheet.css',
+            'timesheets'     => $timesheets
+        ];
+        return view('user.pages.timesheet')->with($params);
+
+    }
 
     
 }

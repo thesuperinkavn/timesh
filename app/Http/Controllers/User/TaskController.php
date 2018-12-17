@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\User;
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\User\Controller;
+use App\Http\Controllers\User\UserController;
 use App\Services\Interfaces\TaskInterface;
 use App\Services\Interfaces\UserInterface;
 
 use Auth;
 
-class TaskController extends Controller
+class TaskController extends UserController
 {
     //
     protected $task, $users;

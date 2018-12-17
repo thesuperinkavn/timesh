@@ -92,9 +92,9 @@ use Carbon\Carbon;
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-menu9"></i></a>
                             <ul class="dropdown-menu dropdown-menu-right">
-                                <li><a href="{{ route('timesheet.edit',$timesheet->id) }}" id="addtask" data-id="<?=$timesheet->id?>"><i class="icon-pencil7"></i> Sửa nội dung</a></li>
+                                <li><a href="{{ route('timesheet.edit',$timesheet->id) }}" id="edit" data-id="<?=$timesheet->id?>"><i class="icon-pencil7"></i> Sửa nội dung</a></li>
                                 <li class="divider"></li>
-                                <li><a href="{{ url('timesheet/addtask?id='.$timesheet->id) }}" id="addtask" data-id="<?=$timesheet->id?>"><i class="icon-plus-circle2"></i> Thêm task</a></li>
+                                <li><a href="{{ route('timesheet.addtask',$timesheet->id) }}" id="addtask" data-id="<?=$timesheet->id?>"><i class="icon-plus-circle2"></i> Thêm task</a></li>
                             </ul>
                         </li>
                     </ul>
@@ -133,7 +133,7 @@ $(document).ready(function(){
         });
         $.ajax({
             method: 'POST', // Type of response and matches what we said in the route
-            url: '/timesheet/show', // This is the url we gave in the route
+            url: "{{ route('timesheet.show') }}", // This is the url we gave in the route
             data: {'id' : id}, // a JSON object to send back
             success: function(response){ // What to do if we succeed
                 //console.log(response);
